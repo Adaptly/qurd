@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ListResourceRecordSetsResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ResourceRecordSets>
+		<ResourceRecordSet><Name>test-414.staging.example.com.</Name><Type>A</Type><TTL>30</TTL><ResourceRecords><ResourceRecord><Value>172.16.30.125</Value></ResourceRecord></ResourceRecords></ResourceRecordSet>
+</ResourceRecordSets><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListResourceRecordSetsResponse>

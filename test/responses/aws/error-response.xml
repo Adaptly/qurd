@@ -1,0 +1,1 @@
+<?xml version="1.0"?><ErrorResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/"><Error><Type>Sender</Type><Code>AWS.SimpleQueueService.NonExistentQueue</Code><Message>The specified queue does not exist for this wsdl version.</Message><Detail/></Error><RequestId>4a4ef953-0543-5b72-b507-b4d1f438e064</RequestId></ErrorResponse>

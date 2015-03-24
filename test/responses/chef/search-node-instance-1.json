@@ -1,0 +1,784 @@
+{
+    "rows":[
+        {
+            "run_list": ["role[application]"],
+            "recipes": ["ohai"],
+            "name": "test-414.staging.example.com",
+            "chef_environment": "staging",
+            "json_class": "Chef::Node",
+            "automatic": {
+                "kernel": {
+                    "name": "Linux",
+                    "release": "3.2.0-77-virtual",
+                    "version": "#112-Ubuntu SMP Tue Feb 10 15:34:22 UTC 2015",
+                    "machine": "x86_64",
+                    "os": "GNU/Linux",
+                    "modules": {
+                        "isofs": {
+                            "size": "40259",
+                            "refcount": "0"
+                        },
+                        "acpiphp": {
+                            "size": "24231",
+                            "refcount": "0"
+                        }
+                    }
+                },
+                "network": {
+                    "interfaces": {
+                        "lo": {
+                            "mtu": "16436",
+                            "flags": [
+                                "LOOPBACK",
+                                "UP",
+                                "LOWER_UP"
+                            ],
+                            "encapsulation": "Loopback",
+                            "addresses": {
+                                "127.0.0.1": {
+                                    "family": "inet",
+                                    "prefixlen": "8",
+                                    "netmask": "255.0.0.0",
+                                    "scope": "Node"
+                                },
+                                "::1": {
+                                    "family": "inet6",
+                                    "prefixlen": "128",
+                                    "scope": "Node"
+                                }
+                            },
+                            "state": "unknown"
+                        },
+                        "eth0": {
+                            "type": "eth",
+                            "number": "0",
+                            "mtu": "9001",
+                            "flags": [
+                                "BROADCAST",
+                                "MULTICAST",
+                                "UP",
+                                "LOWER_UP"
+                            ],
+                            "encapsulation": "Ethernet",
+                            "addresses": {
+                                "0E:10:F4:DE:EB:BB": {
+                                    "family": "lladdr"
+                                },
+                                "172.16.30.125": {
+                                    "family": "inet",
+                                    "prefixlen": "23",
+                                    "netmask": "255.255.254.0",
+                                    "broadcast": "172.16.31.255",
+                                    "scope": "Global"
+                                },
+                                "fe80::c10:f4ff:fede:ebbb": {
+                                    "family": "inet6",
+                                    "prefixlen": "64",
+                                    "scope": "Link"
+                                }
+                            },
+                            "state": "up",
+                            "arp": {
+                                "172.16.30.1": "0e:dd:bf:3e:9b:8b"
+                            },
+                            "routes": [
+                                {
+                                    "destination": "default",
+                                    "family": "inet",
+                                    "via": "172.16.30.1",
+                                    "metric": "100"
+                                },
+                                {
+                                    "destination": "172.16.30.0/23",
+                                    "family": "inet",
+                                    "scope": "link",
+                                    "proto": "kernel",
+                                    "src": "172.16.30.125"
+                                },
+                                {
+                                    "destination": "fe80::/64",
+                                    "family": "inet6",
+                                    "metric": "256",
+                                    "proto": "kernel"
+                                }
+                            ]
+                        }
+                    },
+                    "default_interface": "eth0",
+                    "default_gateway": "172.16.30.1"
+                },
+                "counters": {
+                    "network": {
+                        "interfaces": {
+                            "lo": {
+                                "rx": {
+                                    "bytes": "140935504",
+                                    "packets": "125029",
+                                    "errors": "0",
+                                    "drop": "0",
+                                    "overrun": "0"
+                                },
+                                "tx": {
+                                    "bytes": "140935504",
+                                    "packets": "125029",
+                                    "errors": "0",
+                                    "drop": "0",
+                                    "carrier": "0",
+                                    "collisions": "0"
+                                }
+                            },
+                            "eth0": {
+                                "tx": {
+                                    "queuelen": "1000",
+                                    "bytes": "79220071",
+                                    "packets": "118529",
+                                    "errors": "0",
+                                    "drop": "0",
+                                    "carrier": "0",
+                                    "collisions": "0"
+                                },
+                                "rx": {
+                                    "bytes": "181310971",
+                                    "packets": "202589",
+                                    "errors": "0",
+                                    "drop": "0",
+                                    "overrun": "0"
+                                }
+                            }
+                        }
+                    }
+                },
+                "ipaddress": "172.16.30.125",
+                "macaddress": "0E:10:F4:DE:EB:BB",
+                "filesystem": {
+                    "/dev/xvda1": {
+                        "kb_size": "103212320",
+                        "kb_used": "3016464",
+                        "kb_available": "94954156",
+                        "percent_used": "4%",
+                        "mount": "/",
+                        "total_inodes": "6553600",
+                        "inodes_used": "135711",
+                        "inodes_available": "6417889",
+                        "inodes_percent_used": "3%",
+                        "fs_type": "ext4",
+                        "mount_options": [
+                            "rw"
+                        ]
+                    },
+                    "udev": {
+                        "kb_size": "7661552",
+                        "kb_used": "8",
+                        "kb_available": "7661544",
+                        "percent_used": "1%",
+                        "mount": "/dev",
+                        "total_inodes": "1915388",
+                        "inodes_used": "392",
+                        "inodes_available": "1914996",
+                        "inodes_percent_used": "1%",
+                        "fs_type": "devtmpfs",
+                        "mount_options": [
+                            "rw",
+                            "mode=0755"
+                        ]
+                    },
+                    "tmpfs": {
+                        "kb_size": "1533964",
+                        "kb_used": "220",
+                        "kb_available": "1533744",
+                        "percent_used": "1%",
+                        "mount": "/run",
+                        "total_inodes": "1917452",
+                        "inodes_used": "284",
+                        "inodes_available": "1917168",
+                        "inodes_percent_used": "1%",
+                        "fs_type": "tmpfs",
+                        "mount_options": [
+                            "rw",
+                            "noexec",
+                            "nosuid",
+                            "size=10%",
+                            "mode=0755"
+                        ]
+                    },
+                    "none": {
+                        "kb_size": "7669808",
+                        "kb_used": "0",
+                        "kb_available": "7669808",
+                        "percent_used": "0%",
+                        "mount": "/run/shm",
+                        "total_inodes": "1917452",
+                        "inodes_used": "1",
+                        "inodes_available": "1917451",
+                        "inodes_percent_used": "1%",
+                        "fs_type": "tmpfs",
+                        "mount_options": [
+                            "rw",
+                            "nosuid",
+                            "nodev"
+                        ]
+                    },
+                    "/dev/xvdb2": {
+                        "kb_size": "37112232",
+                        "kb_used": "226524",
+                        "kb_available": "35000484",
+                        "percent_used": "1%",
+                        "mount": "/apps",
+                        "total_inodes": "2359296",
+                        "inodes_used": "32",
+                        "inodes_available": "2359264",
+                        "inodes_percent_used": "1%",
+                        "fs_type": "ext4",
+                        "mount_options": [
+                            "rw"
+                        ]
+                    },
+                    "proc": {
+                        "mount": "/proc",
+                        "fs_type": "proc",
+                        "mount_options": [
+                            "rw",
+                            "noexec",
+                            "nosuid",
+                            "nodev"
+                        ]
+                    },
+                    "sysfs": {
+                        "mount": "/sys",
+                        "fs_type": "sysfs",
+                        "mount_options": [
+                            "rw",
+                            "noexec",
+                            "nosuid",
+                            "nodev"
+                        ]
+                    },
+                    "devpts": {
+                        "mount": "/dev/pts",
+                        "fs_type": "devpts",
+                        "mount_options": [
+                            "rw",
+                            "noexec",
+                            "nosuid",
+                            "gid=5",
+                            "mode=0620"
+                        ]
+                    },
+                    "xvda1": {
+                        "fs_type": "ext4",
+                        "uuid": "05ff0d8e-fbaf-4357-a261-9165fe9323f9",
+                        "label": "cloudimg-rootfs"
+                    },
+                    "xvdb": {
+                        "fs_type": "ext3",
+                        "uuid": "6b6e6715-711f-477e-8554-3576dec970b9"
+                    },
+                    "xvdb1": {
+                        "fs_type": "swap",
+                        "uuid": "02a0de21-0977-4a8f-8e84-b2fa7e7f83d2"
+                    },
+                    "xvdb2": {
+                        "fs_type": "ext4",
+                        "uuid": "ff37b1f6-651e-4f8d-857b-a0f180ed01d3"
+                    },
+                    "xvdc": {
+                        "fs_type": "ext3",
+                        "uuid": "6b6e6715-711f-477e-8554-3576dec970b9"
+                    },
+                    "rootfs": {
+                        "mount": "/",
+                        "fs_type": "rootfs",
+                        "mount_options": [
+                            "rw"
+                        ]
+                    },
+                    "/dev/disk/by-label/cloudimg-rootfs": {
+                        "mount": "/",
+                        "fs_type": "ext4",
+                        "mount_options": [
+                            "rw",
+                            "relatime",
+                            "user_xattr",
+                            "barrier=1",
+                            "data=ordered"
+                        ]
+                    }
+                },
+                "ip6address": "fe80::c10:f4ff:fede:ebbb",
+                "cpu": {
+                    "0": {
+                        "vendor_id": "GenuineIntel",
+                        "family": "6",
+                        "model": "62",
+                        "model_name": "Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz",
+                        "stepping": "4",
+                        "mhz": "2500.064",
+                        "cache_size": "25600 KB",
+                        "physical_id": "1",
+                        "core_id": "1",
+                        "cores": "1",
+                        "flags": [
+                            "fpu",
+                            "de",
+                            "tsc",
+                            "msr",
+                            "pae",
+                            "cx8",
+                            "sep",
+                            "cmov",
+                            "pat",
+                            "clflush",
+                            "mmx",
+                            "fxsr",
+                            "sse",
+                            "sse2",
+                            "ss",
+                            "ht",
+                            "syscall",
+                            "nx",
+                            "lm",
+                            "constant_tsc",
+                            "rep_good",
+                            "nopl",
+                            "pni",
+                            "pclmulqdq",
+                            "ssse3",
+                            "cx16",
+                            "sse4_1",
+                            "sse4_2",
+                            "x2apic",
+                            "popcnt",
+                            "tsc_deadline_timer",
+                            "aes",
+                            "rdrand",
+                            "hypervisor",
+                            "lahf_lm",
+                            "ida",
+                            "arat",
+                            "epb",
+                            "pln",
+                            "pts",
+                            "dtherm",
+                            "fsgsbase",
+                            "erms"
+                        ]
+                    },
+                    "1": {
+                        "vendor_id": "GenuineIntel",
+                        "family": "6",
+                        "model": "62",
+                        "model_name": "Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz",
+                        "stepping": "4",
+                        "mhz": "2500.064",
+                        "cache_size": "25600 KB",
+                        "physical_id": "1",
+                        "core_id": "1",
+                        "cores": "1",
+                        "flags": [
+                            "fpu",
+                            "de",
+                            "tsc",
+                            "msr",
+                            "pae",
+                            "cx8",
+                            "sep",
+                            "cmov",
+                            "pat",
+                            "clflush",
+                            "mmx",
+                            "fxsr",
+                            "sse",
+                            "sse2",
+                            "ss",
+                            "ht",
+                            "syscall",
+                            "nx",
+                            "lm",
+                            "constant_tsc",
+                            "rep_good",
+                            "nopl",
+                            "pni",
+                            "pclmulqdq",
+                            "ssse3",
+                            "cx16",
+                            "sse4_1",
+                            "sse4_2",
+                            "x2apic",
+                            "popcnt",
+                            "tsc_deadline_timer",
+                            "aes",
+                            "rdrand",
+                            "hypervisor",
+                            "lahf_lm",
+                            "ida",
+                            "arat",
+                            "epb",
+                            "pln",
+                            "pts",
+                            "dtherm",
+                            "fsgsbase",
+                            "erms"
+                        ]
+                    },
+                    "2": {
+                        "vendor_id": "GenuineIntel",
+                        "family": "6",
+                        "model": "62",
+                        "model_name": "Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz",
+                        "stepping": "4",
+                        "mhz": "2500.064",
+                        "cache_size": "25600 KB",
+                        "physical_id": "1",
+                        "core_id": "1",
+                        "cores": "1",
+                        "flags": [
+                            "fpu",
+                            "de",
+                            "tsc",
+                            "msr",
+                            "pae",
+                            "cx8",
+                            "sep",
+                            "cmov",
+                            "pat",
+                            "clflush",
+                            "mmx",
+                            "fxsr",
+                            "sse",
+                            "sse2",
+                            "ss",
+                            "ht",
+                            "syscall",
+                            "nx",
+                            "lm",
+                            "constant_tsc",
+                            "rep_good",
+                            "nopl",
+                            "pni",
+                            "pclmulqdq",
+                            "ssse3",
+                            "cx16",
+                            "sse4_1",
+                            "sse4_2",
+                            "x2apic",
+                            "popcnt",
+                            "tsc_deadline_timer",
+                            "aes",
+                            "rdrand",
+                            "hypervisor",
+                            "lahf_lm",
+                            "ida",
+                            "arat",
+                            "epb",
+                            "pln",
+                            "pts",
+                            "dtherm",
+                            "fsgsbase",
+                            "erms"
+                        ]
+                    },
+                    "3": {
+                        "vendor_id": "GenuineIntel",
+                        "family": "6",
+                        "model": "62",
+                        "model_name": "Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz",
+                        "stepping": "4",
+                        "mhz": "2500.064",
+                        "cache_size": "25600 KB",
+                        "physical_id": "1",
+                        "core_id": "1",
+                        "cores": "1",
+                        "flags": [
+                            "fpu",
+                            "de",
+                            "tsc",
+                            "msr",
+                            "pae",
+                            "cx8",
+                            "sep",
+                            "cmov",
+                            "pat",
+                            "clflush",
+                            "mmx",
+                            "fxsr",
+                            "sse",
+                            "sse2",
+                            "ss",
+                            "ht",
+                            "syscall",
+                            "nx",
+                            "lm",
+                            "constant_tsc",
+                            "rep_good",
+                            "nopl",
+                            "pni",
+                            "pclmulqdq",
+                            "ssse3",
+                            "cx16",
+                            "sse4_1",
+                            "sse4_2",
+                            "x2apic",
+                            "popcnt",
+                            "tsc_deadline_timer",
+                            "aes",
+                            "rdrand",
+                            "hypervisor",
+                            "lahf_lm",
+                            "ida",
+                            "arat",
+                            "epb",
+                            "pln",
+                            "pts",
+                            "dtherm",
+                            "fsgsbase",
+                            "erms"
+                        ]
+                    },
+                    "total": 4,
+                    "real": 1
+                },
+                "os": "linux",
+                "os_version": "3.2.0-77-virtual",
+                "lsb": {
+                    "id": "Ubuntu",
+                    "release": "12.04",
+                    "codename": "precise",
+                    "description": "Ubuntu 12.04.5 LTS"
+                },
+                "platform": "ubuntu",
+                "platform_version": "12.04",
+                "platform_family": "debian",
+                "memory": {
+                    "swap": {
+                        "cached": "0kB",
+                        "total": "1606492kB",
+                        "free": "1606492kB"
+                    },
+                    "total": "15339616kB",
+                    "free": "9648444kB",
+                    "buffers": "48724kB",
+                    "cached": "763936kB",
+                    "active": "5105188kB",
+                    "inactive": "332544kB",
+                    "dirty": "220kB",
+                    "writeback": "0kB",
+                    "anon_pages": "4625356kB",
+                    "mapped": "61140kB",
+                    "slab": "64364kB",
+                    "slab_reclaimable": "51284kB",
+                    "slab_unreclaim": "13080kB",
+                    "page_tables": "16096kB",
+                    "nfs_unstable": "0kB",
+                    "bounce": "0kB",
+                    "commit_limit": "9276300kB",
+                    "committed_as": "14771792kB",
+                    "vmalloc_total": "34359738367kB",
+                    "vmalloc_used": "41152kB",
+                    "vmalloc_chunk": "34359695064kB"
+                },
+                "command": {
+                    "ps": "ps -ef"
+                },
+                "languages": {},
+                "hostname": "test-414",
+                "machinename": "test-414",
+                "fqdn": "test-414.staging.example.com",
+                "domain": "staging.example.com",
+                "ec2": {
+                    "instance_id": "i-b57d975a"
+                },
+                "current_user": null,
+                "chef_packages": {
+                    "ohai": {
+                        "version": "7.4.0",
+                        "ohai_root": "/opt/chef/embedded/lib/ruby/gems/1.9.1/gems/ohai-7.4.0/lib/ohai"
+                    },
+                    "chef": {
+                        "version": "11.16.4",
+                        "chef_root": "/opt/chef/embedded/lib/ruby/gems/1.9.1/gems/chef-11.16.4/lib"
+                    }
+                },
+                "init_package": "init",
+                "block_device": {
+                    "ram0": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram1": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram2": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram3": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram4": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram5": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram6": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram7": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram8": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram9": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram10": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram11": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram12": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram13": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram14": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "ram15": {
+                        "size": "131072",
+                        "removable": "0"
+                    },
+                    "loop0": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop1": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop2": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop3": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop4": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop5": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop6": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "loop7": {
+                        "size": "0",
+                        "removable": "0"
+                    },
+                    "xvda1": {
+                        "size": "209715200",
+                        "removable": "0"
+                    },
+                    "xvdb": {
+                        "size": "78626816",
+                        "removable": "0"
+                    },
+                    "xvdc": {
+                        "size": "78626816",
+                        "removable": "0"
+                    }
+                },
+                "ohai_time": 1427652209.8412876,
+                "recipes": ["ohai"],
+                "roles": [
+                    "application",
+                    "base"
+                ],
+                "nginx": {
+                    "version": "1.1.19",
+                    "configure_arguments": [
+                        "--prefix=/etc/nginx",
+                        "--conf-path=/etc/nginx/nginx.conf",
+                        "--error-log-path=/var/log/nginx/error.log",
+                        "--http-client-body-temp-path=/var/lib/nginx/body",
+                        "--http-fastcgi-temp-path=/var/lib/nginx/fastcgi",
+                        "--http-log-path=/var/log/nginx/access.log",
+                        "--http-proxy-temp-path=/var/lib/nginx/proxy",
+                        "--http-scgi-temp-path=/var/lib/nginx/scgi",
+                        "--http-uwsgi-temp-path=/var/lib/nginx/uwsgi",
+                        "--lock-path=/var/lock/nginx.lock",
+                        "--pid-path=/var/run/nginx.pid",
+                        "--with-debug",
+                        "--with-http_addition_module",
+                        "--with-http_dav_module",
+                        "--with-http_flv_module",
+                        "--with-http_geoip_module",
+                        "--with-http_gzip_static_module",
+                        "--with-http_image_filter_module",
+                        "--with-http_mp4_module",
+                        "--with-http_perl_module",
+                        "--with-http_random_index_module",
+                        "--with-http_realip_module",
+                        "--with-http_secure_link_module",
+                        "--with-http_stub_status_module",
+                        "--with-http_ssl_module",
+                        "--with-http_sub_module",
+                        "--with-http_xslt_module",
+                        "--with-ipv6",
+                        "--with-sha1=/usr/include/openssl",
+                        "--with-md5=/usr/include/openssl",
+                        "--with-mail",
+                        "--with-mail_ssl_module",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-auth-pam",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/chunkin-nginx-module",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/headers-more-nginx-module",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-development-kit",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-echo",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-http-push",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-lua",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-upload-module",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-upload-progress",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-upstream-fair",
+                        "--add-module=/build/buildd/nginx-1.1.19/debian/modules/nginx-dav-ext-module"
+                    ],
+                    "prefix": "/etc/nginx",
+                    "conf_path": "/etc/nginx/nginx.conf"
+                }
+            },
+            "normal": {
+                "deployed_apps": [
+                    "test"
+                ],
+                "tags": [
+                    "staging",
+                    "test-web",
+                    "test"
+                ]
+            },
+            "chef_type": "node"
+        }
+    ],
+    "start":0,
+    "total":1
+}

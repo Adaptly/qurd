@@ -1,23 +1,32 @@
-require "rubygems"
-require "bundler/setup"
-require "singleton"
-require "json"
-require "hash"
-require "yaml"
-require "hashie"
-require "cabin"
-require "aws-sdk"
-require "qurd/version"
+require 'rubygems'
+require 'bundler/setup'
+# monkey patch inspect
+require 'hash'
+# add method underscore
+require 'string'
+require 'fileutils'
+require 'singleton'
+require 'json'
+require 'yaml'
+require 'hashie'
+require 'cabin'
+require 'aws-sdk'
+require 'qurd/version'
 
+# Ain't that some bullshit
 module Qurd
-  autoload :Configuration, "qurd/configuration"
-  autoload :Message, "qurd/message"
-  autoload :Mixins, "qurd/mixins"
-  autoload :Actions, "qurd/actions"
+  autoload :Action, 'qurd/action'
+  autoload :Configuration, 'qurd/configuration'
+  autoload :Listener, 'qurd/listener'
+  autoload :Message, 'qurd/message'
+  autoload :Mixins, 'qurd/mixins'
+  autoload :Processor, 'qurd/processor'
+
   extend Mixins::Configuration
+
   class << self
-    def start
-      qurd_config.configure(ARGV[0])
+    def start(config = nil)
+      qurd_config.configure(config)
       daemonize
       listen_to_queues
     end
@@ -28,21 +37,13 @@ module Qurd
       IO.write(qurd_configuration.pid_file, $$)
     end
 
+    # Iterate over listeners and their queues, listen for messages, and
+    # processing them
     def listen_to_queues
-      loop do
-        qurd_accounts.each do |acct|
-          acct.queues.each do |q|
-            msgs = acct.sqs.receive_message(
-              queue_url: q,
-              wait_time_seconds: acct.wait_time
-            )
-            msgs.messages.each do |msg|
-              Message.new(queue: q, config: acct, message: msg).process
-            end
-          end
-        end
-      end
+      threads = qurd_configuration.listeners.map(&:listen).flatten
+      $0 = "qurd [#{threads.count} threads]"
+      qurd_logger.debug("Threads #{threads}")
+      threads.each(&:join)
     end
-
   end
 end

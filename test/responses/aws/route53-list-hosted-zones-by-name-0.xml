@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<ListHostedZonesByNameResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones>
+</HostedZones><DNSName>staging.example.com.</DNSName><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesByNameResponse>

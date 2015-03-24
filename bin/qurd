@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 $: << File.dirname(__FILE__) + '/../lib'
 require 'qurd'
-Qurd.start
+if ARGV[0] && !File.exist?(ARGV[0])
+  STDERR.puts "File does not exist: '#{ARGV[0]}'"
+  STDERR.puts "Usage: qurd [/path/to/config.yml]"
+  exit 1
+end
+Qurd.start(ARGV[0])
 # vim:ft=ruby:

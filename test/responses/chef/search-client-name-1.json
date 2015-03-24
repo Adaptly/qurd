@@ -1,0 +1,7 @@
+{
+  "rows": [
+    {"name":"test-414.staging.example.com","public_key":"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2LxxzyLSApvZfMkCAwsv\nZWsZnPor1axZvcq87j0lW6wqvBcjJo4V7iOS9beEfxf+UL/xOUjUnAYnp4zPYedh\nvVRGPZhaJRJG3DJErw8VE8BY2gu2uD8P4Ff4DNUBIyFjyshP1a9u8Cls0R4cl/yX\nSVVxENQz//RXvQwFNoJCQjVkKCdeUkM+k6cC5Mcib39BFJsDBpszwNhfTutrXLo0\nON0le9uIU+o1F/+Lrnh6XuIuM6pohTajIqTACOA43a97ekVe5vWIJd8vAT4VZI8U\nEdCgjh00BxampDvzBAsPaKDCecVf2nA1HS8OLjgzbZhIRQuS8M3eA6YDdCzP8X7A\nHQIDAQAB\n-----END PUBLIC KEY-----\n\n","validator":false,"admin":false,"json_class":"Chef::ApiClient","chef_type":"client"}
+	],
+	"start":0,
+	"total":1
+}

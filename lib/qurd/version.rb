@@ -1,3 +1,5 @@
+# Gem module
 module Qurd
-  VERSION = "0.0.1"
+  # The daemon version
+  VERSION = '0.0.1'
 end

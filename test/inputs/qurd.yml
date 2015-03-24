@@ -1,0 +1,32 @@
+---
+daemonize: false
+pid_file: tmp/qurd.pid
+wait_time: 20
+visibility_timeout: 600
+log_file: tmp/qurd.log
+log_level: debug
+aws_credentials:
+  - name: test
+    type: credentials
+    options:
+      access_key_id: bar
+      secret_access_key: foo
+auto_scaling_queues:
+  staging:
+    credentials: test
+    region: us-west-2
+    queues:
+      - "/ScalingNotificationsQueue/"
+
+actions:
+  launch:
+    - "Qurd::Action::Dummy"
+  launch_error:
+    - "Qurd::Action::Dummy"
+  terminate:
+    - "Qurd::Action::Dummy"
+  terminate_error:
+    - "Qurd::Action::Dummy"
+  test:
+    - "Qurd::Action::Dummy"
+

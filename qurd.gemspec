@@ -22,7 +22,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "pry-nav"
+  spec.add_development_dependency "webmock"
+  spec.add_development_dependency "minitest-matchers_vaccine"
 
-  spec.add_runtime_dependency "hashie", "~> 3.4.0"
-  spec.add_runtime_dependency "aws-sdk", "~> 2.0.0"
+  spec.add_runtime_dependency "cabin", "~> 0.7.0"
+  spec.add_runtime_dependency "hashie"
+  spec.add_runtime_dependency "aws-sdk", "~> 2.0.30"
+  spec.add_runtime_dependency "chef", ">= 11.16.0"
 end

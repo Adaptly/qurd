@@ -1,0 +1,17 @@
+<AssumeRoleResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+  <AssumeRoleResult>
+    <AssumedRoleUser>
+      <Arn>arn:aws:sts::123456890:assumed-role/test-12345678901234-IAMRole-1B4T284VK5TY/foo</Arn>
+      <AssumedRoleId>AROAIOACMD7RRGNV2WEMC:foo</AssumedRoleId>
+    </AssumedRoleUser>
+    <Credentials>
+      <SessionToken>AQoDYXdzEBYagAIaMJv9iVCiwJTaU6qUE9GV1qI34f2LXYkFNbdSE7FOowpZQBF9b4PnudOYYepmMZvhmNRYukVhK5nK/GS9fP202H5gsUeeZCyAGCDF3tuwmed5zgB8tEYqtSFLpRJsQEIIN/5mZMPcme3S3hfdXMO+8KI5XgxNSk/w8kvu28p82bWWZHCArpJgJOgENJRkjhHvk3b3DS9XGgcfmUJrJX0QG3iDRLI9rARj9ZfCpDDO0c7hs38cFZXFrtUzs4s6/TqI/gOCD/H9OJUtnEfC6c1kV8C4sSwR6M++dkZyF7OUaWVohEwYUWDaxe/L+3Fy4GSkEH8kFZ2RHLSag7ifUpo2IIC/2qgF</SessionToken>
+      <SecretAccessKey>nnTKt8tyqv43nBvywc0CuwhS9FgXtSX13cH2ndBB</SecretAccessKey>
+      <Expiration>2038-01-01T00:00:00Z</Expiration>
+      <AccessKeyId>ABCDEFABCDEFABCDEF</AccessKeyId>
+    </Credentials>
+  </AssumeRoleResult>
+  <ResponseMetadata>
+    <RequestId>94aa8f24-d546-11e4-97f5-b1b52459b49e</RequestId>
+  </ResponseMetadata>
+</AssumeRoleResponse>

@@ -1,5 +1,6 @@
+# rubocop:disable Documentation
 class Hash
   def inspect
-    self.to_json
+    to_json
   end
 end

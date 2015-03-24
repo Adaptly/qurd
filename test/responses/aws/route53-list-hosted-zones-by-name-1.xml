@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ListHostedZonesByNameResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones>
+  <HostedZone><Id>/hostedzone/Z3EWK6Z93GXEWJ</Id><Name>staging.example.com.</Name><CallerReference>6805285A-F3C0-4E87-ABB5-97A4E6A66C27</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>23</ResourceRecordSetCount></HostedZone>
+</HostedZones><DNSName>staging.example.com.</DNSName><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesByNameResponse>
