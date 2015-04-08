@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Philip Champon"]
   spec.email         = ["philip@adaptly.com"]
   spec.summary       = %q{QUeue Resource Daemon: reaping and sowing your auto-scaled resources}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.description   = %q{Configure resources, based on auto scaling events, published to SQS. Qurd is extensible, simply create a plugin and let it rip.}
   spec.homepage      = "https://github.com/Adaptly/qurd"
   spec.license       = "MIT"
 
