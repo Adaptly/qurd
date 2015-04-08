@@ -74,7 +74,7 @@ describe Qurd::Action::Route53 do
       )
       lambda {
         subject.send :hosted_zone, 0
-      }.must_raise Aws::Route53::Errors::Error
+      }.must_raise Aws::Route53::Errors::Http500Error
     end
   end
 
@@ -107,7 +107,7 @@ describe Qurd::Action::Route53 do
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml', 500
       lambda {
         subject.send :resource_record, 0
-      }.must_raise Aws::Route53::Errors::Error
+      }.must_raise Aws::Route53::Errors::Http500Error
     end
 
   end
@@ -183,7 +183,7 @@ describe Qurd::Action::Route53 do
       Qurd::Configuration.instance.config.dry_run = false
       lambda {
         subject.terminate
-      }.must_raise Aws::Route53::Errors::Error
+      }.must_raise Aws::Route53::Errors::Http500Error
     end
 
     it 'keeps a node; failed' do
