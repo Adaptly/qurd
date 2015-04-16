@@ -39,12 +39,12 @@ describe Qurd::Action do
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd.yml')
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
     end
     let(:sqs_client) { Aws::SQS::Client.new(region: 'us-west-2') }
     let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
     let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
-    let(:qurd_message) { Qurd::Message.new(message: sqs_message) }
+    let(:qurd_message) { Qurd::Message.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b')) }
     let(:subject) { TestActionClass.new(qurd_message) }
 
     it 'includes configuration mixin' do
@@ -72,12 +72,12 @@ describe Qurd::Action do
       end
     end
 
-    it 'responds to region' do
-      subject.region.must_equal qurd_message.region
-    end
-
-    it 'responds to aws_credentials' do
-      subject.aws_credentials.must_equal qurd_message.aws_credentials
+    %w[aws_credentials instance chef_client chef_node failed! failed? 
+       instance_id instance_name name region].each do |method|
+      it "responds to #{method}" do
+        aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+       subject.send(method).must_equal qurd_message.send(method)
+      end
     end
 
     %w[launch launch_error terminate terminate_error test].each do |action|

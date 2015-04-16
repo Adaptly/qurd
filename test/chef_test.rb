@@ -58,6 +58,11 @@ describe Qurd::Action::Chef do
         "instance_id:#{qurd_message.instance_id}"
       )
       chef_search(
+        'test/responses/chef/search-node-instance-n.json',
+        'node',
+        "name:test-414.staging.example.com"
+      )
+      chef_search(
         'test/responses/chef/search-client-name-n.json',
         'client',
         'name:test-414.staging.example.com'
@@ -67,11 +72,34 @@ describe Qurd::Action::Chef do
       subject.message.context[:chef_name].must_equal nil
     end
 
-    it 'finds a node and client' do
+    it 'finds a node (instance_id) and client' do
       chef_search(
         'test/responses/chef/search-node-instance-1.json',
         'node',
         "instance_id:#{qurd_message.instance_id}"
+      )
+      chef_search(
+        'test/responses/chef/search-client-name-1.json',
+        'client',
+        'name:test-414.staging.example.com'
+      )
+      subject.run_before
+      subject.message.chef_node.must_be_kind_of Chef::Node
+      subject.message.context[:chef_name].must_equal 'test-414.staging.example.com'
+      subject.message.chef_client.must_be_kind_of Chef::ApiClient
+      subject.message.context[:chef_client_name].must_equal 'test-414.staging.example.com'
+    end
+
+    it 'finds a node (name) and client' do
+      chef_search(
+        'test/responses/chef/search-node-instance-0.json',
+        'node',
+        "instance_id:#{qurd_message.instance_id}"
+      )
+      chef_search(
+        'test/responses/chef/search-node-instance-1.json',
+        'node',
+        "name:test-414.staging.example.com"
       )
       chef_search(
         'test/responses/chef/search-client-name-1.json',
@@ -90,6 +118,11 @@ describe Qurd::Action::Chef do
         'test/responses/chef/search-node-instance-0.json',
         'node',
         "instance_id:#{qurd_message.instance_id}"
+      )
+      chef_search(
+        'test/responses/chef/search-node-instance-0.json',
+        'node',
+        "name:test-414.staging.example.com"
       )
       chef_search(
         'test/responses/chef/search-client-name-0.json',

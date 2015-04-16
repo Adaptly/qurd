@@ -19,14 +19,19 @@ Dummy is provided as a simple example, but, in a nutshell, inherit from
 Qurd::Action and override the actions you respond to.
 
 Your action class can configure itself, by overriding the class method
-`configure`. Instances must override the action methods launch, launch_error,
-terminate, terminate_error, and test. Action instances have two attributes,
-`message` and `context`. Message is a `Qurd::Message` instance. Context is a
-`Cabin::Context`, used for logging. Callbacks, to interact with the action
-before and after the instance are executed, can be overridden.
+`configure`. Instances must override the action methods `launch`,
+`launch_error`, `terminate`, `terminate_error`, and `test`. Action instances
+have two attributes, `message` and `context`. Message is a `Qurd::Message`
+instance. Context is a `Cabin::Context`, used for logging. Callbacks, to
+interact with the action before and after the instance are executed, can be
+overridden.
 
 The mixins for AwsClients and Configuration are also available at the class and
 instance level.
+
+Action instances will also respond to `aws_credentials`, 
+`chef_client`, `chef_client=`, `chef_node`, `chef_node=`, `failed!`, `failed?`,
+`instance`, `instance_id`, `instance_name`, `name`, `region`.
 
 ```ruby
 # This contrived example creates a file in s3 when an instance launches
@@ -45,7 +50,7 @@ class Foo < Qurd::Action
     aws_retryable do
       aws_client(:S3).delete_object(
         bucket: qurd_configuration.bucket,
-        key: message.instance_id
+        key: instance_id
       )
     end
   end
@@ -54,8 +59,8 @@ class Foo < Qurd::Action
     aws_retryable do
       aws_client(:S3).put_object(
         bucket: qurd_configuration.bucket,
-        key: message.instance_id,
-        body: message.instance.private_ip_address
+        key: instance_id,
+        body: instance.private_ip_address
       )
     end
   end
@@ -64,7 +69,7 @@ class Foo < Qurd::Action
     aws_retryable do
       o = aws_client(:S3).get_object(
         bucket: qurd_configuration.bucket,
-        key: message.instance_id
+        key: instance_id
       )
       qurd_logger.debug("Found #{o.body}")
     end
@@ -121,7 +126,7 @@ If you are using the route53 action, you will also need
                 "route53:ChangeResourceRecordSets",
                 "route53:DeleteHostedZone",
                 "route53:GetHostedZone",
-                "route53:ListHostedZones",
+                "route53:ListHostedZonesByName",
                 "route53:ListResourceRecordSets"
             ],
             "Resource": [

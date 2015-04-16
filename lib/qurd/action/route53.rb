@@ -39,7 +39,7 @@ module Qurd
       # dry_run is not true
       # @see {#Qurd::Message}
       def terminate
-        if message.failed?
+        if failed?
           qurd_logger.warn('Not deleting, message failed to process')
         elsif qurd_configuration.dry_run
           if !hosted_zone
@@ -63,21 +63,17 @@ module Qurd
 
       private
 
-      def instance_name
-        message.instance_name
-      end
-
       def route53
         @route53 ||= aws_client(:Route53)
       end
 
       def qurd_route53
-        @config ||= qurd_configuration.route53[message.name]
+        @config ||= qurd_configuration.route53[name]
       end
 
       def chef_node_name
         return @chef_node_name if @chef_node_name
-        @chef_node_name = message.chef_node.name
+        @chef_node_name = chef_node.name
         qurd_logger.debug("Found chef name '#{@chef_node_name}'")
         @chef_node_name
       rescue NoMethodError
@@ -127,7 +123,7 @@ module Qurd
         end
       rescue Qurd::Action::Route53::Errors => e
         qurd_logger.error("Failed to delete: #{e}")
-        message.failed!(e)
+        failed!(e)
       end
 
       def hosted_zone(tries = nil)

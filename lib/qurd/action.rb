@@ -1,3 +1,4 @@
+require 'forwardable'
 module Qurd
   # Subclass and override {#launch}, {#launch_error}, {#terminate},
   # {#terminate_error}, and {#test}, optionally override class method
@@ -12,11 +13,48 @@ module Qurd
     autoload :Chef, 'qurd/action/chef'
     autoload :Route53, 'qurd/action/route53'
 
+    extend Forwardable
+
     extend Qurd::Mixins::Configuration
     include Qurd::Mixins::Configuration
 
     extend Qurd::Mixins::AwsClients
     include Qurd::Mixins::AwsClients
+
+    # @!attribute aws_credentials [r]
+    #   @return [Aws::Credentials]
+    def_delegator :@message, :aws_credentials, :aws_credentials
+    # @!attribute chef_client
+    #   @return [Chef::ApiClient]
+    def_delegator :@message, :chef_client, :chef_client
+    def_delegator :@message, :chef_client=, :chef_client=
+    # @!attribute chef_node
+    #   @return [Chef::Node]
+    def_delegator :@message, :chef_node, :chef_node
+    def_delegator :@message, :chef_node=, :chef_node=
+    # @!method failed!(e) [r]
+    #   Log an action failure, setting the Qurd::Message
+    #   @return [Aws::Credentials]
+    #   @see Qurd::Message.failed!
+    def_delegator :@message, :failed!, :failed!
+    # @!attribute failed? [r]
+    #   @return [Boolean]
+    def_delegator :@message, :failed?, :failed?
+    # @!attribute instance_id [r]
+    #   @return [String]
+    def_delegator :@message, :instance_id, :instance_id
+    # @!attribute instance_name [r]
+    #   @return [String]
+    def_delegator :@message, :instance_name, :instance_name
+    # @!attribute instance [r]
+    #   @return [Struct]
+    def_delegator :@message, :instance, :instance
+    # @!attribute name [r]
+    #   @return [String]
+    def_delegator :@message, :name, :name
+    # @!attribute region [r]
+    #   @return [String]
+    def_delegator :@message, :region, :region
 
     # @!attribute context [r]
     #   The logging context
@@ -44,18 +82,6 @@ module Qurd
       end
       @message = message
       @context = message.context
-    end
-
-    # Aws region for the message
-    # @return [String]
-    def region
-      message.region
-    end
-
-    # Aws credentials for the message
-    # @return [Aws::Credentials]
-    def aws_credentials
-      message.aws_credentials
     end
 
     # Executed before the processor runs the plugins for an action

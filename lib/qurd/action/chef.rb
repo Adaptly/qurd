@@ -47,14 +47,14 @@ module Qurd
       # dry_run is not true
       # @see {#Qurd::Message}
       def terminate
-        if message.failed?
+        if failed?
           qurd_logger.warn('Not deleting, message failed to process')
         elsif qurd_configuration.dry_run
           check_dry_run
         else
           qurd_logger.debug('Deleting')
-          message.chef_node.destroy unless message.chef_node.nil?
-          message.chef_client.destroy unless message.chef_client.nil?
+          chef_node.destroy unless chef_node.nil?
+          chef_client.destroy unless chef_client.nil?
         end
       end
 
@@ -68,26 +68,27 @@ module Qurd
       # Set the +message+ +chef_node+ and +context+ +chef_name+
       # @see chef_search_node
       def find_chef_node
-        node = chef_search_node
-        message.chef_node = node
+        node = chef_search_node("instance_id", instance_id)
+        node ||= chef_search_node("name", instance_name)
+        self.chef_node = node
         message.context[:chef_name] = node.name
         qurd_logger.debug('Chef node found')
       rescue NoMethodError
         qurd_logger.warn('Chef node not found')
-        message.chef_node = nil
+        self.chef_node = nil
         message.context[:chef_name] = nil
       end
 
       # Set the +message+ +chef_client+ and +context+ +chef_client_name+
       # @see chef_search_client
       def find_chef_client
-        client = chef_search_client(message.chef_node.name)
-        message.chef_client = client
+        client = chef_search_client(chef_node.name)
+        self.chef_client = client
         message.context[:chef_client_name] = client.name
         qurd_logger.debug('Chef client found')
       rescue NoMethodError
         qurd_logger.warn('Chef client not found')
-        message.chef_client = nil
+        self.chef_client = nil
         message.context[:chef_client_name] = nil
       end
 
@@ -98,10 +99,11 @@ module Qurd
       end
 
       # Search for a Chef node, based on the +instance_id+
+      # @param [String] key the chef key to search
+      # @param [String] value the value of the key to search
       # @return [Chef::Node|nil]
-      # @see instance_id
-      def chef_search_node
-        res = chef_search.search(:node, "instance_id:#{message.instance_id}")
+      def chef_search_node(key, value)
+        res = chef_search.search(:node, "#{key}:#{value}")
         res.last == 1 ? res[0][0] : nil
       end
 
