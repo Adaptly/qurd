@@ -221,6 +221,13 @@ To configure the daemon, edit the YAML configuration file. The default path is
   </tr>
 
   <tr>
+    <td><tt>stats_interval</tt></td>
+    <td>Control the interval at which stats are logged, in seconds</td>
+    <td><tt>Fixnum</tt></td>
+    <td><tt>600</tt></td>
+  </tr>
+
+  <tr>
     <td><tt>sqs_set_attributes_timeout</tt></td>
     <td>Defines the timeout, in seconds, for a thread setting SQS attributes</td>
     <td><tt>Float</tt></td>

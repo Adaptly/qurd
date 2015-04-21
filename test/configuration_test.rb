@@ -61,6 +61,7 @@ describe Qurd::Configuration do
         subject.config.pid_file.must_equal '/var/run/qurd/qurd.pid'
         subject.config.save_failures.must_equal true
         subject.config.sqs_set_attributes_timeout.must_equal 10.0
+        subject.config.stats_interval.must_equal 600
         subject.config.visibility_timeout.must_equal '300'
         subject.config.wait_time.must_equal '20'
       end
@@ -74,6 +75,7 @@ describe Qurd::Configuration do
         pid_file: 'tmp/qurd.pid',
         save_failures: false,
         sqs_set_attributes_timeout: 3,
+        stats_interval: 100,
         visibility_timeout: 0,
         wait_time: 1
       )
@@ -85,6 +87,7 @@ describe Qurd::Configuration do
         subject.config.pid_file.must_equal 'tmp/qurd.pid'
         subject.config.save_failures.must_equal false
         subject.config.sqs_set_attributes_timeout.must_equal 3.0
+        subject.config.stats_interval.must_equal 100
         subject.config.visibility_timeout.must_equal '0'
         subject.config.wait_time.must_equal '1'
       end

@@ -58,6 +58,9 @@ module Qurd
     # @yieldparam [Cabin::Context] ctx the logging context
     def queue_threads(&_block)
       queues.map do |qurl|
+        @mutex = Mutex.new
+        @counter = Hashie::Mash.new({thread_timeouts: 0, aws_service_errors: 0, successes: 0, failures: 0, messages: 0})
+
         qurd_logger.debug("Creating thread for #{qurl}")
         Thread.new(qurl) do |url|
           ctx = qurd_config.get_context(name: name, queue_name: url[/([^\/]+)$/])
@@ -71,7 +74,7 @@ module Qurd
     # message received
     # @return [Array<Thread>]
     def listen
-      queue_threads do |qurl, _context|
+      [stats_thread] + queue_threads do |qurl, _context|
         loop do
           begin
             msgs = aws_client(:SQS).receive_message(
@@ -84,9 +87,12 @@ module Qurd
               thread.join(qurd_configuration.listen_timeout)
             end
             if joins.compact.count != threads.count
+              nthreads = threads.count - joins.compact.count
+              lock_counter { @counter.thread_timeouts += nthreads }
               qurd_logger.warn('Some threads timed out')
             end
           rescue Aws::Errors::ServiceError => e
+            lock_counter { @counter.aws_service_errors += 1 }
             qurd_logger.error("Aws raised #{e}")
           end
         end
@@ -100,12 +106,39 @@ module Qurd
 
     private
 
+    def stats_thread
+      Thread.new do
+        loop do
+          sleep(qurd_configuration.stats_interval)
+          lock_counter { qurd_logger.info("STATS", @counter) }
+        end
+      end
+    end
+
+    def lock_counter(&_block)
+      @mutex.synchronize {
+        begin
+          yield
+        rescue ThreadError => e
+          @mutex.sleep(0.1)
+          qurd_logger.debug("ThreadError: #{e}")
+          retry
+        end
+      }
+    end
+
     def process_messages(qurl, msgs)
+      lock_counter { @counter.messages += msgs.messages.count }
       msgs.messages.map do |msg|
         Thread.new(msg) do |m|
           qurd_logger.debug("Found message #{msg}")
           r = Processor.new self, m, name, qurl
           r.process
+          lock_counter { 
+            r.message.failed? ?
+              @counter.failures += 1 :
+              @counter.successes += 1
+          }
         end
       end
     end

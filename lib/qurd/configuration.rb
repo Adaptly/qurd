@@ -8,8 +8,8 @@ module Qurd
     #   Configuration options, ie
     #   +aws_credentials+, +auto_scaling_queues+, +actions+, +daemonize+,
     #   +dry_run+, +listen_timeout+, +log_file+, +log_level+, +pid_file+,
-    #   +save_failures+, +sqs_set_attributes_timeout+, +visibility_timeout+,
-    #   +wait_time+.
+    #   +save_failures+, +stats_interval+, +sqs_set_attributes_timeout+,
+    #   +visibility_timeout+, +wait_time+.
     #   Additional configuration keys include +listeners+.
     #   @return [Hashie::Mash] the config YAML as a Mash
     # @!attribute [r] logger
@@ -30,10 +30,12 @@ module Qurd
       @config.save_failures = get_or_default(@config, :save_failures, true)
       @queues = []
       @aws_credentials = []
+      st = get_or_default(@config, :sqs_set_attributes_timeout, 10, :to_f)
+      si = get_or_default(@config, :stats_interval, 600, :to_i)
       vt = get_or_default(@config, :visibility_timeout, 300, :to_s)
       wt = get_or_default(@config, :wait_time, 20, :to_s)
-      st = get_or_default(@config, :sqs_set_attributes_timeout, 10, :to_f)
       lt = get_or_default(@config, :listen_timeout, vt, :to_f)
+      @config.stats_interval = si
       @config.visibility_timeout = vt
       @config.wait_time = wt
       @config.sqs_set_attributes_timeout = st
