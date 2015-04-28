@@ -74,7 +74,7 @@ module Qurd
     # message received
     # @return [Array<Thread>]
     def listen
-      [stats_thread] + queue_threads do |qurl, _context|
+      threads = queue_threads do |qurl, _context|
         loop do
           begin
             msgs = aws_client(:SQS).receive_message(
@@ -97,6 +97,7 @@ module Qurd
           end
         end
       end
+      threads << stats_thread
     end
 
     # @private
@@ -167,6 +168,7 @@ module Qurd
           )
         rescue Aws::SQS::Errors::ServiceError::QueueDoesNotExist => e
           qurd_logger.error("SQS raised #{e}")
+          Thread.terminate
         rescue Aws::SQS::Errors::ServiceError => e
           qurd_logger.error("SQS raised #{e}")
           raise e
