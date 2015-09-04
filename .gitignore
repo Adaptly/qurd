@@ -13,3 +13,4 @@
 *.a
 mkmf.log
 *.sw[a-z]
+test/reports
