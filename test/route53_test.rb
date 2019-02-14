@@ -163,6 +163,7 @@ describe Qurd::Action::Route53 do
       mock.expect :debug, nil, [String]
       mock.expect :debug, nil, [String]
       mock.expect :debug, nil, [String]
+      mock.expect :debug, nil, [String]
       mock.expect :debug, nil, ['Dry run; would delete']
 
       subject.stub :qurd_logger, mock do

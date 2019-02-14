@@ -166,7 +166,7 @@ module Qurd
               VisibilityTimeout: visibility_timeout
             }
           )
-        rescue Aws::SQS::Errors::ServiceError::QueueDoesNotExist => e
+        rescue Aws::SQS::Errors::QueueDoesNotExist => e
           qurd_logger.error("SQS raised #{e}")
           Thread.terminate
         rescue Aws::SQS::Errors::ServiceError => e

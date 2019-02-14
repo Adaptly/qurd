@@ -95,9 +95,10 @@ module Qurd
         @rr = aws_retryable(tries) do
           route53.list_resource_record_sets(
             hosted_zone_id: hosted_zone.id,
-            start_record_name: hostname,
-            max_items: 1
-          ).resource_record_sets.first
+            start_record_name: hostname
+          ).resource_record_sets.find{|r|
+            r.name == hostname
+          }
         end
         @rr || qurd_logger!('Resource record not found',
                             Errors::ResourceNotFound)
