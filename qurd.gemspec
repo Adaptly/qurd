@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "cabin", "~> 0.7.0"
   spec.add_runtime_dependency "hashie"
-  spec.add_runtime_dependency "aws-sdk", "~> 2.0.30"
+  spec.add_runtime_dependency "aws-sdk", "~> 2.11.220"
   spec.add_runtime_dependency "chef", ">= 11.16.0"
 end
