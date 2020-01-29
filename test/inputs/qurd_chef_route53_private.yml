@@ -6,12 +6,12 @@ wait_time: 20
 visibility_timeout: 600
 log_file: tmp/qurd.log
 log_level: debug
+
 aws_credentials:
   - name: test
-    type: credentials
+    type: shared_credentials
     options:
-      access_key_id: bar
-      secret_access_key: foo
+      profile_name: prod-west
 auto_scaling_queues:
   staging:
     credentials: test
@@ -19,7 +19,11 @@ auto_scaling_queues:
     queues:
       - "/ScalingNotificationsQueue/"
 
+chef_configuration: "test/inputs/knife.rb"
+
 route53_private:
+  staging:
+    hosted_zone: "private.staging.example.com."
 
 actions:
   launch:
@@ -28,10 +32,12 @@ actions:
     - "Qurd::Action::Dummy"
   terminate:
     - "Qurd::Action::Dummy"
+    - "Qurd::Action::Chef"
     - "Qurd::Action::Route53Private"
   terminate_error:
     - "Qurd::Action::Dummy"
   test:
     - "Qurd::Action::Dummy"
+    - "Qurd::Action::Chef"
     - "Qurd::Action::Route53Private"
 
