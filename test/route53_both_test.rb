@@ -31,16 +31,6 @@ describe Qurd::Action::Route53 do
       subject_private.terminate
     end
 
-    it 'raises during destroys a node; not dry_run; not failed' do
-      aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 500)
-      aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 500, 'Z3EWK6Z93GXEWX')
-      Qurd::Configuration.instance.config.dry_run = false
-      lambda {
-        subject_private.terminate
-        subject.terminate
-      }.must_raise Aws::Route53::Errors::Http500Error
-    end
-
     it 'keeps a node; failed' do
       mock.expect :warn, nil, ['Not deleting, message failed to process']
       qurd_message.stub :failed?, true do
