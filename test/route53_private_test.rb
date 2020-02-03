@@ -38,16 +38,24 @@ describe Qurd::Action::Route53Private do
     def setup
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
-      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_private.yml')
     end
 
     it 'returns a hostname' do
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_private.yml')
       subject.send(:instance_name).must_equal 'test-414.private.staging.example.com'
     end
 
+    it 'returns a non-private hostname' do
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_private.yml')
+      subject.send(:instance_name).must_equal 'test-414.staging.example.com'
+    end
+
     it 'returns nil' do
+      aws_sqs_receive_message 
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-0.xml'
       subject.send(:instance_name).must_equal nil
     end
@@ -75,6 +83,28 @@ describe Qurd::Action::Route53Private do
       lambda {
         subject.send :hosted_zone, 0
       }.must_raise Aws::Route53::Errors::Http500Error
+    end
+  end
+
+  describe '#hostname' do
+    def setup
+      aws_sqs_list_queues
+      aws_sqs_set_queue_attributes
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef_route53_private.yml')
+    end
+
+    it 'uses the given hostname' do
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
+      ret = subject.send :hostname
+      ret.must_equal 'test-414.private.staging.example.com.'
+    end
+
+    it 'sets the correct hostname' do
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
+      ret = subject.send :hostname
+      ret.must_equal 'test-414.private.staging.example.com.'
     end
   end
 

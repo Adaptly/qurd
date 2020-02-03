@@ -78,6 +78,28 @@ describe Qurd::Action::Route53 do
     end
   end
 
+  describe '#hostname' do
+    def setup
+      aws_sqs_list_queues
+      aws_sqs_set_queue_attributes
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef_route53.yml')
+    end
+
+    it 'uses the given hostname' do
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml' 
+      ret = subject.send :hostname
+      ret.must_equal 'test-414.staging.example.com.'
+    end
+
+    it 'sets the correct hostname' do
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
+      ret = subject.send :hostname
+      ret.must_equal 'test-414.staging.example.com.'
+    end
+  end
+
   describe '#resource_record' do
     def setup
       aws_sqs_list_queues

@@ -52,7 +52,14 @@ module Qurd
             qurd_logger.debug('Dry run; would delete')
           end
         else
-          route53_delete
+          begin
+            route53_delete
+          rescue Errors::ResourceNotFound => e
+            # If the zone derived from the hostname equals the hosted zone it's
+            # a real problem. If, on the other hand, the hosted zone differs
+            # from the derived zone assume Route53CreatePriavte is false or only.
+            raise e if @derived_domain == qurd_route53.hosted_zone
+          end
         end
       end
 
@@ -82,7 +89,19 @@ module Qurd
       end
 
       def hostname
-        @hostname = instance_name || chef_node_name
+        # NOTE: during private zone r53 migration, instance/node names may be
+        # configured in both private and public zones or only one of the zones
+        name = instance_name || chef_node_name
+        if ENV['A5Y_ENV'] == 'dev'
+          # test-1.dev.zoo.us-east-1.adaptly.com -> (test-1.dev.)(zoo.us-east-1.adaptly.com)
+          name[/([-\w]+\.[-\w]+\.)(.*)/]
+        else
+          # test-1.production.us-east-1.adaptly.com -> (test-1.)(production.us-east-1.adaptly.com)
+          name[/([-\w]+\.)(.*)/]
+        end
+        @derived_domain = $2
+        @hostname = $1
+        @hostname += qurd_route53.hosted_zone
         @hostname.sub!(/([^.])$/, '\1.')
         qurd_logger.debug("Using host '#{@hostname}'")
         @hostname
@@ -135,7 +154,7 @@ module Qurd
           @hosted_zone = route53.list_hosted_zones_by_name(
             dns_name: name,
             max_items: 1
-          ).hosted_zones.first
+          ).hosted_zones.find{|z| z.name == name}
           qurd_logger.debug "Found zone '#{@hosted_zone}'"
         end
         @hosted_zone || qurd_logger!("Zone not found: '#{name}'",

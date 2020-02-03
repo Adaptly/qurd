@@ -9,14 +9,12 @@ describe Qurd::Action::Route53 do
   let(:subject) { Qurd::Action::Route53.new(qurd_message) }
   let(:subject_private) { Qurd::Action::Route53Private.new(qurd_message) }
 
-  describe '#terminate' do
+  describe 'both zones' do
     def setup
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 
-      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
       aws_sqs_receive_message 
-      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
       aws_route53_list_hosted_zones_by_name
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets
@@ -25,23 +23,7 @@ describe Qurd::Action::Route53 do
     end
     let(:mock) { Minitest::Mock.new }
 
-    it 'saves a node; dry_run' do
-      mock.expect :debug, nil, [String]
-      mock.expect :debug, nil, [String]
-      mock.expect :debug, nil, [String]
-      mock.expect :debug, nil, [String]
-      mock.expect :debug, nil, [String]
-      mock.expect :debug, nil, ['Dry run; would delete']
-
-      subject.stub :qurd_logger, mock do
-        Qurd::Configuration.instance.config.dry_run = true
-        subject.terminate
-        subject_private.terminate
-      end
-      mock.verify
-    end
-
-    it 'destroys a node; not dry_run; not failed' do
+    it 'destroys two resources; not dry_run; not failed' do
       aws_route53_change_resource_record_sets
       aws_route53_change_resource_record_sets'test/responses/aws/route53-change-resource-record-sets.xml', 200, 'Z3EWK6Z93GXEWX' 
       Qurd::Configuration.instance.config.dry_run = false
@@ -54,8 +36,8 @@ describe Qurd::Action::Route53 do
       aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 500, 'Z3EWK6Z93GXEWX')
       Qurd::Configuration.instance.config.dry_run = false
       lambda {
-        subject.terminate
         subject_private.terminate
+        subject.terminate
       }.must_raise Aws::Route53::Errors::Http500Error
     end
 
@@ -82,6 +64,50 @@ describe Qurd::Action::Route53 do
       qurd_message.failed?.must_equal true
     end
 
+  end
+
+  describe 'only private zone' do
+    def setup
+      aws_sqs_list_queues
+      aws_sqs_set_queue_attributes
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
+      aws_sqs_receive_message 
+      aws_route53_list_hosted_zones_by_name
+      aws_route53_list_hosted_zones_by_name 'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
+      aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml'
+      aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-1-private.xml', 200, 'Z3EWK6Z93GXEWX'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
+    end
+    let(:mock) { Minitest::Mock.new }
+
+    it 'destroys private resource; not dry_run; not failed' do
+      aws_route53_change_resource_record_sets'test/responses/aws/route53-change-resource-record-sets.xml', 200, 'Z3EWK6Z93GXEWX' 
+      Qurd::Configuration.instance.config.dry_run = false
+      subject.terminate
+      subject_private.terminate
+    end
+  end
+
+  describe 'only default zone' do
+    def setup
+      aws_sqs_list_queues
+      aws_sqs_set_queue_attributes
+      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+      aws_sqs_receive_message 
+      aws_route53_list_hosted_zones_by_name
+      aws_route53_list_hosted_zones_by_name 'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
+      aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-1.xml'
+      aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml', 200, 'Z3EWK6Z93GXEWX'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
+    end
+    let(:mock) { Minitest::Mock.new }
+
+    it 'destroys default resource; not dry_run; not failed' do
+      aws_route53_change_resource_record_sets
+      Qurd::Configuration.instance.config.dry_run = false
+      subject.terminate
+      subject_private.terminate
+    end
   end
 
 end
