@@ -19,7 +19,7 @@ auto_scaling_queues:
     queues:
       - "/ScalingNotificationsQueue/"
 
-route53:
+route53_private:
 
 actions:
   launch:
@@ -28,10 +28,10 @@ actions:
     - "Qurd::Action::Dummy"
   terminate:
     - "Qurd::Action::Dummy"
-    - "Qurd::Action::Route53"
+    - "Qurd::Action::Route53Private"
   terminate_error:
     - "Qurd::Action::Dummy"
   test:
     - "Qurd::Action::Dummy"
-    - "Qurd::Action::Route53"
+    - "Qurd::Action::Route53Private"
 
