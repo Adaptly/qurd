@@ -20,6 +20,8 @@ auto_scaling_queues:
       - "/ScalingNotificationsQueue/"
 
 route53_private:
+  staging:
+    hosted_zone: "private.staging.example.com."
 
 actions:
   launch:

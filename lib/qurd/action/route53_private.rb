@@ -1,18 +1,18 @@
 require 'qurd/action'
 module Qurd
   class Action
-    # Clean up route53 records
-    # @example Route53 configuration
+    # Clean up route53 records, in private zones
+    # @example Route53Private configuration
     #   auto_scaling_queues:
     #     staging:
     #       credentials: foo
     #       region: us-east-1
     #       queues:
     #         - "/QueueName/i"
-    #   route53:
+    #   route53_private:
     #     staging:
-    #       hosted_zone: "staging.example.com."
-    class Route53 < Action
+    #       hosted_zone: "private.staging.example.com."
+    class Route53Private < Action
       # Parent class for errors
       class Errors < StandardError
         # Hosted Zone not found
@@ -24,11 +24,11 @@ module Qurd
       end
 
       @configure_done = false
-      # Verify each +auto_scaling_queue+ has a corresponding +route53+ key and
+      # Verify each +auto_scaling_queue+ has a corresponding +route53_private+ key and
       # that each of those keys defines a +hosted_zone+
       # @param [String] _action the action being configured
       # @raise [RuntimeError] if any +auto_scaling_queues+ do not have correctly
-      #   configured +route53+ keys
+      #   configured +route53_private+ keys
       def self.configure(_action)
         return if @configure_done
         check_configuration
@@ -75,7 +75,7 @@ module Qurd
       end
 
       def qurd_route53
-        @config ||= qurd_configuration.route53[name]
+        @config ||= qurd_configuration.route53_private[name]
       end
 
       def chef_node_name
@@ -105,8 +105,8 @@ module Qurd
         @hostname.sub!(/([^.])$/, '\1.')
         qurd_logger.debug("Using host '#{@hostname}'")
         @hostname
-      rescue NoMethodError => e
-        qurd_logger!("No instance or chef information: #{e}",
+      rescue NoMethodError
+        qurd_logger!('No instance or chef information',
                      Errors::HostNotFound)
       end
 
@@ -141,7 +141,7 @@ module Qurd
             }
           )
         end
-      rescue Qurd::Action::Route53::Errors => e
+      rescue Qurd::Action::Route53Private::Errors => e
         qurd_logger.error("Failed to delete: #{e}")
         failed!(e)
       end
@@ -162,9 +162,9 @@ module Qurd
       end
 
       def self.config_valid?(name)
-        if qurd_configuration.route53.nil? || \
-           qurd_configuration.route53[name].nil? || \
-           qurd_configuration.route53[name].hosted_zone.nil?
+        if qurd_configuration.route53_private.nil? || \
+           qurd_configuration.route53_private[name].nil? || \
+           qurd_configuration.route53_private[name].hosted_zone.nil?
           false
         else
           true
@@ -177,7 +177,7 @@ module Qurd
           missing << name unless config_valid?(name)
         end
         m = missing.join(', ')
-        qurd_logger! "Missing configuration for route53: #{m}" unless m.empty?
+        qurd_logger! "Missing configuration for route53_private: #{m}" unless m.empty?
       end
     end
   end
