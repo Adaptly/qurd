@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 bundle package --all
 bundle install --binstubs bundler-bin --deployment --local --without development test
 echo ${BUILD_NUMBER} > .release.txt
