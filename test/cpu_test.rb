@@ -50,7 +50,6 @@ describe Qurd::Action::Cpu do
     let(:mock) { Minitest::Mock.new }
 
     it 'saves a node; dry_run' do
-      mock.expect :debug, nil, [String]
       mock.expect :debug, nil, ['Dry run; would delete']
 
       subject.stub :qurd_logger, mock do
