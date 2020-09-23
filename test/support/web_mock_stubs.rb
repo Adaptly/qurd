@@ -68,6 +68,13 @@ module WebMockStubs
   def ec2metadata
     ec2_latest_meta_data_iam_security_credentials
     ec2_latest_meta_data_iam_security_credentials_client
+    ec2_latest_api_token
+  end
+
+  def ec2_latest_api_token(file = 'test/responses/ec2/latest-api-token.txt',
+                           status = 200)
+    stub_request(:put, 'http://169.254.169.254/latest/api/token')
+      .to_return(status: status.to_i, body: File.read(file))
   end
 
   def ec2_latest_meta_data_iam_security_credentials(file = 'test/responses/ec2/latest-meta-data-iam-security-credentials.txt',
