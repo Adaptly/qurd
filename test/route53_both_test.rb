@@ -51,7 +51,7 @@ describe Qurd::Action::Route53 do
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
       subject_private.terminate
-      qurd_message.failed?.must_equal true
+      _(qurd_message.failed?).must_equal true
     end
 
   end

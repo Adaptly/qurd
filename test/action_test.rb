@@ -14,12 +14,12 @@ describe Qurd::Action do
 
     it 'includes configuration mixin' do
       %w(qurd_config qurd_configuration qurd_logger qurd_logger!).each do |m|
-        subject.must_respond_to m
+        _(subject).must_respond_to m
       end
     end
 
     it 'includes aws_client mixin' do
-      subject.must_respond_to :aws_client
+      _(subject).must_respond_to :aws_client
     end
 
     describe '#configure' do
@@ -49,26 +49,26 @@ describe Qurd::Action do
 
     it 'includes configuration mixin' do
       %w(qurd_config qurd_configuration qurd_logger qurd_logger!).each do |m|
-        subject.must_respond_to m
+        _(subject).must_respond_to m
       end
     end
 
     it 'includes aws_client mixin' do
-      subject.must_respond_to :aws_client
+      _(subject).must_respond_to :aws_client
     end
 
     describe '#new' do
       it 'raises Qurd::Action::InvalidMessage' do
-        lambda do
+        _(lambda do
           TestActionClass.new(Object.new)
-        end.must_raise Qurd::Action::InvalidMessage
+        end).must_raise Qurd::Action::InvalidMessage
       end
 
       it 'sets various ivars' do
-        subject.message.must_equal qurd_message
-        subject.context.must_equal qurd_message.context
-        subject.instance_variable_get(:@message).must_equal subject.message
-        subject.instance_variable_get(:@context).must_equal subject.context
+        _(subject.message).must_equal qurd_message
+        _(subject.context).must_equal qurd_message.context
+        _(subject.instance_variable_get(:@message)).must_equal subject.message
+        _(subject.instance_variable_get(:@context)).must_equal subject.context
       end
     end
 
@@ -76,16 +76,16 @@ describe Qurd::Action do
        instance_id instance_name name region].each do |method|
       it "responds to #{method}" do
         aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
-       subject.send(method).must_equal qurd_message.send(method)
+       _(subject.send(method)).must_equal qurd_message.send(method)
       end
     end
 
     %w[launch launch_error terminate terminate_error test].each do |action|
       describe "##{action}" do
         it 'raises RuntimeError' do
-          lambda do
+          _(lambda do
             subject.send action
-          end.must_raise RuntimeError
+          end).must_raise RuntimeError
         end
       end
     end

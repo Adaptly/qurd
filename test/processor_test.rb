@@ -20,7 +20,7 @@ describe Qurd::Processor do
   describe 'configuration mixin' do
     it 'responds to #qurd_config' do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
-      subject.must_respond_to :qurd_config
+      _(subject).must_respond_to :qurd_config
     end
   end
 

@@ -18,27 +18,27 @@ describe Qurd::Action::Chef do
     it 'adds the Qurd::Message accessors chef_node, chef_client' do
       Qurd::Configuration.instance.init('test/inputs/qurd_chef.yml')
       Qurd::Action::Chef.configure('launch')
-      Qurd::Message.instance_methods.must_include :chef_node
-      Qurd::Message.instance_methods.must_include :chef_client
+      _(Qurd::Message.instance_methods).must_include :chef_node
+      _(Qurd::Message.instance_methods).must_include :chef_client
     end
 
     it 'sets the logger for chef' do
       Qurd::Configuration.instance.init('test/inputs/qurd_chef.yml')
       Qurd::Action::Chef.configure('launch')
-      ::Chef::Config[:log_location].path.must_equal 'tmp/qurd.log'
+      _(::Chef::Config[:log_location].path).must_equal 'tmp/qurd.log'
     end
 
     it 'sets the chef log level' do
       expected = Qurd::Configuration.instance.config.log_level
       Qurd::Configuration.instance.init('test/inputs/qurd_chef.yml')
       Qurd::Action::Chef.configure('launch')
-      ::Chef::Config[:log_level].must_equal expected
+      _(::Chef::Config[:log_level]).must_equal expected
     end
   end
 
   describe '#chef_search' do
     it 'memoizes Chef::Search::Query' do
-      subject.send(:chef_search).must_equal subject.send(:chef_search)
+      _(subject.send(:chef_search)).must_equal subject.send(:chef_search)
     end
   end
 
@@ -68,8 +68,8 @@ describe Qurd::Action::Chef do
         'name:test-414.staging.example.com'
       )
       subject.run_before
-      subject.message.chef_node.must_equal nil
-      subject.message.context[:chef_name].must_equal nil
+      _(subject.message.chef_node).must_equal nil
+      _(subject.message.context[:chef_name]).must_equal nil
     end
 
     it 'finds a node (instance_id) and client' do
@@ -84,10 +84,10 @@ describe Qurd::Action::Chef do
         'name:test-414.staging.example.com'
       )
       subject.run_before
-      subject.message.chef_node.must_be_kind_of Chef::Node
-      subject.message.context[:chef_name].must_equal 'test-414.staging.example.com'
-      subject.message.chef_client.must_be_kind_of Chef::ApiClient
-      subject.message.context[:chef_client_name].must_equal 'test-414.staging.example.com'
+      _(subject.message.chef_node).must_be_kind_of Chef::Node
+      _(subject.message.context[:chef_name]).must_equal 'test-414.staging.example.com'
+      _(subject.message.chef_client).must_be_kind_of Chef::ApiClient
+      _(subject.message.context[:chef_client_name]).must_equal 'test-414.staging.example.com'
     end
 
     it 'finds a node (name) and client' do
@@ -107,10 +107,10 @@ describe Qurd::Action::Chef do
         'name:test-414.staging.example.com'
       )
       subject.run_before
-      subject.message.chef_node.must_be_kind_of Chef::Node
-      subject.message.context[:chef_name].must_equal 'test-414.staging.example.com'
-      subject.message.chef_client.must_be_kind_of Chef::ApiClient
-      subject.message.context[:chef_client_name].must_equal 'test-414.staging.example.com'
+      _(subject.message.chef_node).must_be_kind_of Chef::Node
+      _(subject.message.context[:chef_name]).must_equal 'test-414.staging.example.com'
+      _(subject.message.chef_client).must_be_kind_of Chef::ApiClient
+      _(subject.message.context[:chef_client_name]).must_equal 'test-414.staging.example.com'
     end
 
     it 'does not find a node' do
@@ -130,8 +130,8 @@ describe Qurd::Action::Chef do
         'name:test-414.staging.example.com'
       )
       subject.run_before
-      subject.message.chef_node.must_equal nil
-      subject.message.context[:chef_name].must_equal nil
+      _(subject.message.chef_node).must_equal nil
+      _(subject.message.context[:chef_name]).must_equal nil
     end
 
   end

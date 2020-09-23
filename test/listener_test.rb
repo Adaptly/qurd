@@ -31,11 +31,11 @@ describe Qurd::Listener do
   describe '#queue_threads' do
     it 'creates one thread per queue' do
       threads = subject.queue_threads do |url, ctx|
-        url.must_equal queue_url
-        ctx.must_be_kind_of Cabin::Context
+        _(url).must_equal queue_url
+        _(ctx).must_be_kind_of Cabin::Context
       end
-      threads.count.must_equal 1
-      threads.first.must_be_kind_of Thread
+      _(threads.count).must_equal 1
+      _(threads.first).must_be_kind_of Thread
     end
   end
 
@@ -77,7 +77,7 @@ describe Qurd::Listener do
       mock.expect :warn, nil, ["No queue found for 'FooQueue'"]
       subject.stub :qurd_logger, mock do
         ret = subject.send :convert_queues, ['FooQueue']
-        ret.must_be :empty?
+        _(ret).must_be :empty?
       end
       mock.verify
     end
@@ -90,14 +90,14 @@ describe Qurd::Listener do
       mock.expect :warn, nil, ["No queue found for '(?-mix:FooQueue)'"]
       subject.stub :qurd_logger, mock do
         ret = subject.send :convert_queues, ['/FooQueue/']
-        ret.must_be :empty?
+        _(ret).must_be :empty?
       end
       mock.verify
     end
 
     it 'converts names to urls' do
       ret = subject.send :convert_queues, [queue_name]
-      ret.must_equal [queue_url]
+      _(ret).must_equal [queue_url]
     end
 
     it 'converts regexes to urls' do
@@ -123,13 +123,13 @@ describe Qurd::Listener do
         https://us-west-2.queue.amazonaws.com/123456890/test19-ScalingNotificationsQueue-1U30UKNUS17YY
       )
       ret = subject.send :convert_queues, ['/ScalingNotificationsQueue/']
-      ret.must_equal expected
+      _(ret).must_equal expected
       ret = subject.send :convert_queues, ['/scalingnotificationsqueue/i']
-      ret.must_equal expected
+      _(ret).must_equal expected
       ret = subject.send :convert_queues, ["/
                                            scalingnotificationsqueue # comment
                                            /xi"]
-      ret.must_equal expected
+      _(ret).must_equal expected
     end
   end
 end

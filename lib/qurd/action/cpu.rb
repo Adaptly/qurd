@@ -44,9 +44,7 @@ module Qurd
         if failed?
           qurd_logger.warn('Not deleting, message failed to process')
         elsif qurd_configuration.dry_run
-          if !auto_scaling_group
-            qurd_logger.debug('Dry run; missing auto scaling group')
-          elsif !auto_scaling_group_instance_id
+          if !auto_scaling_group_instance_id
             qurd_logger.debug('Dry run; missing auto scaling group instance id')
           else
             qurd_logger.debug('Dry run; would delete')
@@ -63,7 +61,7 @@ module Qurd
 
       # Terminate the EC2 instance associated with the auto scaling group
       def terminate_instance
-        ec2.terminate_instance instance_id: auto_scaling_group_instance_id
+        ec2.terminate_instances instance_ids: [auto_scaling_group_instance_id]
       end
 
       def auto_scaling_group_instance_id
@@ -71,16 +69,20 @@ module Qurd
         @auto_scaling_group_instance_id ||= auto_scaling_group.instances[0].instance_id
       end
 
+      def auto_scaling_group_name
+        @auto_scaling_group_name ||= message.message.Trigger.Dimensions.find{|d| d["name"] == "AutoScalingGroupName"}["value"]
+      end
+
       def auto_scaling_group
         return @auto_scaling_group if @auto_scaling_group
-        g = asg.describe_auto_scaling_groups auto_scaling_group_names: [message.AutoScalingGroupName]
+        g = asg.describe_auto_scaling_groups auto_scaling_group_names: [auto_scaling_group_name]
         @auto_scaling_group = g.auto_scaling_groups.first
       end
 
       private
 
       def ec2
-        @ec2 ||= aws_client(:Ec2)
+        @ec2 ||= aws_client(:EC2)
       end
 
       def asg

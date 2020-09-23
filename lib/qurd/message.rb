@@ -86,7 +86,8 @@ module Qurd
     # @return [Hashie::Mash]
     def body
       @body ||= Hashie::Mash.new JSON.load(@sqs_message.body)
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      qurd_logger.error "Failed to parse body: #{e}"
       @body = Hashie::Mash.new {}
     end
 
@@ -98,7 +99,8 @@ module Qurd
     # @return [Hashie::Mash]
     def message
       @message ||= Hashie::Mash.new JSON.load(body.Message)
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      qurd_logger.error "Failed to parse message: #{e}"
       @message = Hashie::Mash.new {}
     end
 
@@ -161,14 +163,26 @@ module Qurd
     # @return [String] +launch+, +launch_error+, +terminate+, +terminate_error+,
     #   or +test+
     def action
-      case message.Event
-      when 'autoscaling:EC2_INSTANCE_LAUNCH' then 'launch'
-      when 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR' then 'launch_error'
-      when 'autoscaling:EC2_INSTANCE_TERMINATE' then 'terminate'
-      when 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR' then 'terminate_error'
-      when 'autoscaling:TEST_NOTIFICATION' then 'test'
+      if body.Subject =~ /^Auto Scaling: /
+        case message.Event
+        when 'autoscaling:EC2_INSTANCE_LAUNCH' then 'launch'
+        when 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR' then 'launch_error'
+        when 'autoscaling:EC2_INSTANCE_TERMINATE' then 'terminate'
+        when 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR' then 'terminate_error'
+        when 'autoscaling:TEST_NOTIFICATION' then 'test'
+        else
+          qurd_logger.warn "Ignoring ASG #{message.Event}"
+          failed!
+        end
+      elsif body.Subject =~ /^ALARM: /
+        if message.NewStateValue == 'ALARM'
+          'terminate'
+        else
+          qurd_logger.warn "Ignoring Alarm #{message.NewStateValue}"
+          failed!
+        end
       else
-        qurd_logger.info "Ignoring #{message.Event}"
+        qurd_logger.error "Ignoring unknown subject #{body.Subject}"
         failed!
       end
     end

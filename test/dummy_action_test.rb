@@ -43,7 +43,7 @@ describe Qurd::Action::Dummy do
         it 'sets dummy context' do
           aws_sqs_receive_message "test/responses/aws/sqs-receive-message-1-#{action}.xml"
           subject.send action
-          subject.context[:dummy].must_equal true
+          _(subject.context[:dummy]).must_equal true
         end
       end
     end

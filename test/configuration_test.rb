@@ -55,15 +55,15 @@ describe Qurd::Configuration do
       config.merge!(log_file: nil, pid_file: nil)
       stub_yaml config do
         subject.init('/dev/null')
-        subject.config.daemonize.must_equal false
-        subject.config.dry_run.must_equal false
-        subject.config.listen_timeout.must_equal 300.0
-        subject.config.pid_file.must_equal '/var/run/qurd/qurd.pid'
-        subject.config.save_failures.must_equal true
-        subject.config.sqs_set_attributes_timeout.must_equal 10.0
-        subject.config.stats_interval.must_equal 600
-        subject.config.visibility_timeout.must_equal '300'
-        subject.config.wait_time.must_equal '20'
+        _(subject.config.daemonize).must_equal false
+        _(subject.config.dry_run).must_equal false
+        _(subject.config.listen_timeout).must_equal 300.0
+        _(subject.config.pid_file).must_equal '/var/run/qurd/qurd.pid'
+        _(subject.config.save_failures).must_equal true
+        _(subject.config.sqs_set_attributes_timeout).must_equal 10.0
+        _(subject.config.stats_interval).must_equal 600
+        _(subject.config.visibility_timeout).must_equal '300'
+        _(subject.config.wait_time).must_equal '20'
       end
     end
 
@@ -81,15 +81,15 @@ describe Qurd::Configuration do
       )
       stub_yaml config do
         subject.init('/dev/null')
-        subject.config.daemonize.must_equal true
-        subject.config.dry_run.must_equal true
-        subject.config.listen_timeout.must_equal 2.0
-        subject.config.pid_file.must_equal 'tmp/qurd.pid'
-        subject.config.save_failures.must_equal false
-        subject.config.sqs_set_attributes_timeout.must_equal 3.0
-        subject.config.stats_interval.must_equal 100
-        subject.config.visibility_timeout.must_equal '0'
-        subject.config.wait_time.must_equal '1'
+        _(subject.config.daemonize).must_equal true
+        _(subject.config.dry_run).must_equal true
+        _(subject.config.listen_timeout).must_equal 2.0
+        _(subject.config.pid_file).must_equal 'tmp/qurd.pid'
+        _(subject.config.save_failures).must_equal false
+        _(subject.config.sqs_set_attributes_timeout).must_equal 3.0
+        _(subject.config.stats_interval).must_equal 100
+        _(subject.config.visibility_timeout).must_equal '0'
+        _(subject.config.wait_time).must_equal '1'
       end
     end
   end
@@ -98,14 +98,14 @@ describe Qurd::Configuration do
     it 'is true' do
       hashie = hashie_config(log_level: 'debug')
       subject.stub :config, hashie do
-        subject.debug?.must_equal true
+        _(subject.debug?).must_equal true
       end
     end
 
     it 'is false' do
       hashie = hashie_config(log_level: 'info')
       subject.stub :config, hashie do
-        subject.debug?.must_equal false
+        _(subject.debug?).must_equal false
       end
     end
   end
@@ -113,21 +113,21 @@ describe Qurd::Configuration do
   describe '#logger!' do
     it 'logs and raises RuntimeError' do
       mock.expect :error, nil, ['foo']
-      lambda do
+      _(lambda do
         subject.stub :logger, mock do
           subject.logger!('foo')
         end
-      end.must_raise RuntimeError, 'foo'
+      end).must_raise RuntimeError, 'foo'
       mock.verify
     end
 
     it 'logs and raises StandardError' do
       mock.expect :error, nil, ['foo']
-      lambda do
+      _(lambda do
         subject.stub :logger, mock do
           subject.logger!('foo', StandardError)
         end
-      end.must_raise StandardError, 'foo'
+      end).must_raise StandardError, 'foo'
       mock.verify
     end
   end
@@ -147,9 +147,9 @@ describe Qurd::Configuration do
       config.merge!(actions: { launch: ['DoesNotExist'] })
       stub_yaml config do
         subject.init('/dev/null')
-        lambda do
+        _(lambda do
           subject.send :configure_actions
-        end.must_raise RuntimeError, 'Class undefined for actions: DoesNotExist'
+        end).must_raise RuntimeError, 'Class undefined for actions: DoesNotExist'
       end
     end
 
@@ -157,9 +157,9 @@ describe Qurd::Configuration do
       config.merge!(actions: { launch: 'Qurd::Action::Dummy' })
       stub_yaml config do
         subject.init('/dev/null')
-        lambda do
+        _(lambda do
           subject.send :configure_actions
-        end.must_raise RuntimeError, 'Action types must be an array'
+        end).must_raise RuntimeError, 'Action types must be an array'
       end
     end
   end
@@ -172,7 +172,7 @@ describe Qurd::Configuration do
         subject.init '/dev/null'
         subject.send :configure_credentials
         subject.send :configure_auto_scaling_queues
-        subject.config.listeners.count.must_equal 1
+        _(subject.config.listeners.count).must_equal 1
       end
     end
   end
@@ -191,17 +191,17 @@ describe Qurd::Configuration do
 
     it 'chooses a defined value' do
       val = subject.send :get_or_default, obj, :true, 0
-      val.must_equal true
+      _(val).must_equal true
     end
 
     it 'chooses a default value' do
       val = subject.send :get_or_default, obj, :nil, 0
-      val.must_equal 0
+      _(val).must_equal 0
     end
 
     it 'casts a value' do
       val = subject.send :get_or_default, obj, :nil, 0, :to_s
-      val.must_equal '0'
+      _(val).must_equal '0'
     end
   end
 
@@ -217,21 +217,21 @@ describe Qurd::Configuration do
 
       it "raises if #{key} is nil" do
         monitor.delete(key)
-        lambda do
+        _(lambda do
           subject.send :verify_account!, :bam, monitor
-        end.must_raise RuntimeError, "Account bam missing keys: #{key}"
+        end).must_raise RuntimeError, "Account bam missing keys: #{key}"
       end
 
       it "raises if #{key} is empty" do
         monitor[key] = ''
-        lambda do
+        _(lambda do
           subject.send :verify_account!, :bam, monitor
-        end.must_raise RuntimeError, "Account bam missing keys: #{key}"
+        end).must_raise RuntimeError, "Account bam missing keys: #{key}"
       end
 
       it 'is ok' do
         ret = subject.send :verify_account!, :bam, monitor
-        ret.must_equal nil
+        _(ret).must_equal nil
       end
     end
   end
@@ -245,9 +245,9 @@ describe Qurd::Configuration do
 
     it 'raises RuntimeError' do
       skip "can't be root" if Process.uid == 0
-      lambda do
+      _(lambda do
         subject.send :mkdir_p_file!, '/etc/foo'
-      end.must_raise RuntimeError, 'Directory not writable: /etc'
+      end).must_raise RuntimeError, 'Directory not writable: /etc'
     end
   end
 
@@ -255,9 +255,9 @@ describe Qurd::Configuration do
     it 'creates a default' do
       ec2metadata
       ret = subject.send :default_credentials
-      ret[0][0].must_equal 'default'
-      ret[0][1].must_be_kind_of Aws::InstanceProfileCredentials
-      ret.count.must_equal 1
+      _(ret[0][0]).must_equal 'default'
+      _(ret[0][1]).must_be_kind_of Aws::InstanceProfileCredentials
+      _(ret.count).must_equal 1
     end
   end
 
@@ -275,8 +275,8 @@ describe Qurd::Configuration do
         aws_sts_assume_role
         cred.options[key] = '1'
         ret = subject.send :assume_role_credentials, cred
-        ret[0].must_equal cred.name
-        ret[1].must_be_kind_of Aws::AssumeRoleCredentials
+        _(ret[0]).must_equal cred.name
+        _(ret[1]).must_be_kind_of Aws::AssumeRoleCredentials
         Aws.config[:region] = nil
       end
     end
@@ -292,18 +292,18 @@ describe Qurd::Configuration do
     end
     it 'sets access_key_id and secret_access_key' do
       ret = subject.send :credentials, cred
-      ret[0].must_equal cred.name
-      ret[1].access_key_id.must_equal cred.options.access_key_id
-      ret[1].secret_access_key.must_equal cred.options.secret_access_key
+      _(ret[0]).must_equal cred.name
+      _(ret[1].access_key_id).must_equal cred.options.access_key_id
+      _(ret[1].secret_access_key).must_equal cred.options.secret_access_key
     end
 
     it 'sets access_key_id, secret_access_key, and session_token' do
       cred.options.session_token = 'foo'
       ret = subject.send :credentials, cred
-      ret[0].must_equal cred.name
-      ret[1].access_key_id.must_equal cred.options.access_key_id
-      ret[1].secret_access_key.must_equal cred.options.secret_access_key
-      ret[1].session_token.must_equal cred.options.session_token
+      _(ret[0]).must_equal cred.name
+      _(ret[1].access_key_id).must_equal cred.options.access_key_id
+      _(ret[1].secret_access_key).must_equal cred.options.secret_access_key
+      _(ret[1].session_token).must_equal cred.options.session_token
     end
   end
 
@@ -321,8 +321,8 @@ describe Qurd::Configuration do
         ec2metadata
         cred.options[key] = '80'
         ret = subject.send :instance_profile_credentials, cred
-        ret[0].must_equal cred.name
-        ret[1].must_be_kind_of Aws::InstanceProfileCredentials
+        _(ret[0]).must_equal cred.name
+        _(ret[1]).must_be_kind_of Aws::InstanceProfileCredentials
       end
     end
   end
@@ -330,7 +330,7 @@ describe Qurd::Configuration do
   describe '#string2class' do
     it 'returns a class' do
       ret = subject.send :string2class, 'Qurd::Action::Dummy'
-      ret.must_equal Qurd::Action::Dummy
+      _(ret).must_equal Qurd::Action::Dummy
     end
   end
 end

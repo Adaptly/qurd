@@ -1,9 +1,13 @@
 # AWS sends status 400 for test/responses/aws/error-response.xml
 module WebMockStubs
-  def aws_sts_assume_role(file = 'test/responses/aws/sts-assume-role.xml',
-                          status = 200)
-    stub_request(:post, 'https://sts.amazonaws.com/')
-      .with(body: /Action=AssumeRole/)
+
+  def aws_auto_scaling_describe_auto_scaling_groups(
+    file = 'test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml',
+    status = 200,
+    region = 'us-west-2'
+  )
+    stub_request(:post, "https://autoscaling.#{region}.amazonaws.com/")
+      .with(body: /Action=DescribeAutoScalingGroups/)
       .to_return(status: status.to_i, body: File.read(file))
   end
 
@@ -12,6 +16,36 @@ module WebMockStubs
                                  region = 'us-west-2')
     stub_request(:post, "https://ec2.#{region}.amazonaws.com/")
       .with(body: /Action=DescribeInstances/)
+      .to_return(status: status.to_i, body: File.read(file))
+  end
+
+  def aws_ec2_terminate_instances(file = 'test/responses/aws/ec2-terminate-instances-1.xml',
+                                 status = 200,
+                                 region = 'us-west-2')
+    stub_request(:post, "https://ec2.#{region}.amazonaws.com/")
+      .with(body: /Action=TerminateInstances/)
+      .to_return(status: status.to_i, body: File.read(file))
+  end
+
+  def aws_route53_list_hosted_zones_by_name(file = 'test/responses/aws/route53-list-hosted-zones-by-name-1.xml',
+                                            status = 200,
+                                            region = 'us-west-2')
+    stub_request(:get, %r{https://route53.amazonaws.com/2013-04-01/hostedzonesbyname})
+      .to_return(status: status.to_i, body: File.read(file))
+  end
+
+  def aws_route53_list_resource_record_sets(file = 'test/responses/aws/route53-list-resource-record-sets-1.xml',
+                                            status = 200,
+                                            zone = 'Z3EWK6Z93GXEWJ',
+                                            region = 'us-west-2')
+    stub_request(:get, %r{https://route53.amazonaws.com/2013-04-01/hostedzone/#{zone}/rrset}i)
+      .to_return(status: status.to_i, body: File.read(file))
+  end
+
+  def aws_route53_change_resource_record_sets(file = 'test/responses/aws/route53-change-resource-record-sets.xml',
+                                              status = 200,
+                                              zone = 'Z3EWK6Z93GXEWJ')
+    stub_request(:post, "https://route53.amazonaws.com/2013-04-01/hostedzone/#{zone}/rrset/")
       .to_return(status: status.to_i, body: File.read(file))
   end
 
@@ -43,25 +77,11 @@ module WebMockStubs
       .to_return(status: status.to_i, body: File.read(file))
   end
 
-  def aws_route53_list_hosted_zones_by_name(file = 'test/responses/aws/route53-list-hosted-zones-by-name-1.xml',
-                                            status = 200,
-                                            region = 'us-west-2')
-    stub_request(:get, %r{https://route53.amazonaws.com/2013-04-01/hostedzonesbyname})
-      .to_return(status: status.to_i, body: File.read(file))
-  end
-
-  def aws_route53_list_resource_record_sets(file = 'test/responses/aws/route53-list-resource-record-sets-1.xml',
-                                            status = 200,
-                                            zone = 'Z3EWK6Z93GXEWJ',
-                                            region = 'us-west-2')
-    stub_request(:get, %r{https://route53.amazonaws.com/2013-04-01/hostedzone/#{zone}/rrset}i)
-      .to_return(status: status.to_i, body: File.read(file))
-  end
-
-  def aws_route53_change_resource_record_sets(file = 'test/responses/aws/route53-change-resource-record-sets.xml',
-                                              status = 200,
-                                              zone = 'Z3EWK6Z93GXEWJ')
-    stub_request(:post, "https://route53.amazonaws.com/2013-04-01/hostedzone/#{zone}/rrset/")
+  def aws_sts_assume_role(file = 'test/responses/aws/sts-assume-role.xml',
+                          status = 200,
+                         region = 'us-west-2')
+    stub_request(:post, "https://sts.#{region}.amazonaws.com/")
+      .with(body: /Action=AssumeRole/)
       .to_return(status: status.to_i, body: File.read(file))
   end
 

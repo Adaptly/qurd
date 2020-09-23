@@ -12,7 +12,7 @@ describe Qurd::Action::Cpu do
   let(:sqs_client) { Aws::SQS::Client.new(region: 'us-west-2') }
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-AlarmQueue-C6C6L7II8QTM' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
-  let(:qurd_message) { Qurd::Message.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::InstanceProfileCredentials.new(http_open_timeout: 1, http_read_timeout: 1, retries: 1)) }
+  let(:qurd_message) { Qurd::Message.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b'), name: 'staging') }
           
   let(:subject) { Qurd::Action::Cpu.new(qurd_message) }
 
@@ -28,7 +28,6 @@ describe Qurd::Action::Cpu do
     def setup
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
-      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-alarm-cpu.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata
@@ -39,13 +38,32 @@ describe Qurd::Action::Cpu do
 
   describe '#terminate' do
     def setup
+      aws_auto_scaling_describe_auto_scaling_groups
+      aws_ec2_terminate_instances
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
-      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-alarm-cpu.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata
       Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
+    end
+    let(:mock) { Minitest::Mock.new }
+
+    it 'saves a node; dry_run' do
+      mock.expect :debug, nil, [String]
+      mock.expect :debug, nil, ['Dry run; would delete']
+
+      subject.stub :qurd_logger, mock do
+        Qurd::Configuration.instance.config.dry_run = true
+        subject.terminate
+      end
+      mock.verify
+    end
+
+    it 'destroys a node; not dry_run; not failed' do
+      aws_route53_change_resource_record_sets
+      Qurd::Configuration.instance.config.dry_run = false
+      subject.terminate
     end
 
   end
@@ -54,7 +72,6 @@ describe Qurd::Action::Cpu do
     def setup
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
-      aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-alarm-cpu.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata

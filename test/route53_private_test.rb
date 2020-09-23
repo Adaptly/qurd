@@ -20,7 +20,7 @@ describe Qurd::Action::Route53Private do
       Qurd::Configuration.instance.init('test/inputs/qurd_route53_private.yml')
       Qurd::Action::Route53Private.configure('launch')
       ret = Qurd::Action::Route53Private.instance_variable_get :@configure_done
-      ret.must_equal true
+      _(ret).must_equal true
     end
 
   end
@@ -28,9 +28,9 @@ describe Qurd::Action::Route53Private do
   describe '#check_configuration' do
     it 'fails to configure' do
       Qurd::Configuration.instance.init('test/inputs/qurd_route53_private_wrong.yml')
-      lambda {
+      _(lambda {
         Qurd::Action::Route53Private.check_configuration
-      }.must_raise RuntimeError, 'Missing configuration for route53: staging'
+      }).must_raise RuntimeError, 'Missing configuration for route53: staging'
     end
   end
 
@@ -44,20 +44,20 @@ describe Qurd::Action::Route53Private do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
       Qurd::Configuration.instance.configure('test/inputs/qurd_route53_private.yml')
-      subject.send(:instance_name).must_equal 'test-414.private.staging.example.com'
+      _(subject.send(:instance_name)).must_equal 'test-414.private.staging.example.com'
     end
 
     it 'returns a non-private hostname' do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       Qurd::Configuration.instance.configure('test/inputs/qurd_route53_private.yml')
-      subject.send(:instance_name).must_equal 'test-414.staging.example.com'
+      _(subject.send(:instance_name)).must_equal 'test-414.staging.example.com'
     end
 
     it 'returns nil' do
       aws_sqs_receive_message 
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-0.xml'
-      subject.send(:instance_name).must_equal nil
+      _(subject.send(:instance_name)).must_equal nil
     end
   end
 
@@ -72,7 +72,7 @@ describe Qurd::Action::Route53Private do
     it 'finds a zone id' do
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       ret = subject.send :hosted_zone
-      ret.id.must_equal '/hostedzone/Z3EWK6Z93GXEWX'
+      _(ret.id).must_equal '/hostedzone/Z3EWK6Z93GXEWX'
     end
 
     it 'raises Aws::Route53::Errors' do
@@ -80,9 +80,9 @@ describe Qurd::Action::Route53Private do
         'test/responses/aws/route53-list-hosted-zones-by-name-0.xml',
         500
       )
-      lambda {
+      _(lambda {
         subject.send :hosted_zone, 0
-      }.must_raise Aws::Route53::Errors::Http500Error
+      }).must_raise Aws::Route53::Errors::Http500Error
     end
   end
 
@@ -97,14 +97,14 @@ describe Qurd::Action::Route53Private do
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate-private.xml'
       ret = subject.send :hostname
-      ret.must_equal 'test-414.private.staging.example.com.'
+      _(ret).must_equal 'test-414.private.staging.example.com.'
     end
 
     it 'sets the correct hostname' do
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
       ret = subject.send :hostname
-      ret.must_equal 'test-414.private.staging.example.com.'
+      _(ret).must_equal 'test-414.private.staging.example.com.'
     end
   end
 
@@ -121,23 +121,23 @@ describe Qurd::Action::Route53Private do
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets'test/responses/aws/route53-list-resource-record-sets-1-private.xml', 200, 'Z3EWK6Z93GXEWX'
       ret = subject.send :resource_record
-      ret.name.must_equal 'test-414.private.staging.example.com.'
+      _(ret.name).must_equal 'test-414.private.staging.example.com.'
     end
 
     it 'raises Qurd::Action::Route53Private::Errors::ResourceNotFound' do
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml', 200, 'Z3EWK6Z93GXEWX'
-      lambda {
+      _(lambda {
         subject.send :resource_record, 0
-      }.must_raise Qurd::Action::Route53Private::Errors::ResourceNotFound
+      }).must_raise Qurd::Action::Route53Private::Errors::ResourceNotFound
     end
 
     it 'raises Aws::Route53::Errors' do
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml', 500, 'Z3EWK6Z93GXEWX'
-      lambda {
+      _(lambda {
         subject.send :resource_record, 0
-      }.must_raise Aws::Route53::Errors::Http500Error
+      }).must_raise Aws::Route53::Errors::Http500Error
     end
 
   end
@@ -178,9 +178,9 @@ describe Qurd::Action::Route53Private do
     it 'raises during destroys a node; not dry_run; not failed' do
       aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 500, 'Z3EWK6Z93GXEWX')
       Qurd::Configuration.instance.config.dry_run = false
-      lambda {
+      _(lambda {
         subject.terminate
-      }.must_raise Aws::Route53::Errors::Http500Error
+      }).must_raise Aws::Route53::Errors::Http500Error
     end
 
     it 'keeps a node; failed' do
