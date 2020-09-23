@@ -8,7 +8,7 @@
   "useGitShaAsImageTag": false,
   "majorMinorVersionTag": false,
   "copyToBuildRoot": [
-    "scripts/entrypoint.sh"
+    "images/entrypoint.sh"
   ],
   "copyAllToBuildRootExcept": [
     "ci-config.json",
