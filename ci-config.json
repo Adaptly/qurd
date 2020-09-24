@@ -1,8 +1,8 @@
 {
   "buildArgsVersionKey": "RUBY_VERSION",
   "buildArgs": {
-    "RUBY_VERSION": "2.4",
-    "ALPINE_TAG": "3.11"
+    "RUBY_VERSION": "2.5",
+    "ALPINE_TAG": "3.12"
   },
   "imageName": "qurd",
   "useGitShaAsImageTag": false,
