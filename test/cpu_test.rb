@@ -24,6 +24,7 @@ describe Qurd::Action::Cpu do
 
   end
 
+  # TODO add something here?
   describe '#run_before' do
     def setup
       aws_sqs_list_queues
@@ -31,7 +32,6 @@ describe Qurd::Action::Cpu do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata
-      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
     end
 
   end
@@ -45,12 +45,12 @@ describe Qurd::Action::Cpu do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata
-      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'saves a node; dry_run' do
       mock.expect :debug, nil, ['Dry run; would delete']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
 
       subject.stub :qurd_logger, mock do
         Qurd::Configuration.instance.config.dry_run = true
@@ -61,6 +61,7 @@ describe Qurd::Action::Cpu do
 
     it 'raises Http500Error during terminate a node; not dry_run; not failed' do
       aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml', 500)
+      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
       Qurd::Configuration.instance.config.dry_run = false
       _(lambda {
         subject.terminate
@@ -68,12 +69,14 @@ describe Qurd::Action::Cpu do
     end
 
     it 'destroys a node; not dry_run; not failed' do
+      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
     end
 
     it 'keeps a node; failed' do
       mock.expect :warn, nil, ['Not deleting, message failed to process']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
       qurd_message.stub :failed?, true do
         subject.stub :qurd_logger, mock do
           Qurd::Configuration.instance.config.dry_run = false
@@ -93,12 +96,12 @@ describe Qurd::Action::Cpu do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml',
                               '/123456890/test2-AlarmQueue-C6C6L7II8QTM'
       ec2metadata
-      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'logs Test' do
       mock.expect :info, nil, ['Test']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_cpu.yml')
       subject.run_before
       subject.stub :qurd_logger, mock do
         subject.test

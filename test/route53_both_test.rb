@@ -20,13 +20,13 @@ describe Qurd::Action::Route53 do
       aws_route53_list_hosted_zones_by_name'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets
       aws_route53_list_resource_record_sets'test/responses/aws/route53-list-resource-record-sets-1-private.xml', 200, 'Z3EWK6Z93GXEWX'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'destroys two resources; not dry_run; not failed' do
       aws_route53_change_resource_record_sets
       aws_route53_change_resource_record_sets'test/responses/aws/route53-change-resource-record-sets.xml', 200, 'Z3EWK6Z93GXEWX' 
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
       subject_private.terminate
@@ -34,6 +34,7 @@ describe Qurd::Action::Route53 do
 
     it 'keeps a node; failed' do
       mock.expect :warn, nil, ['Not deleting, message failed to process']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
       qurd_message.stub :failed?, true do
         subject.stub :qurd_logger, mock do
           Qurd::Configuration.instance.config.dry_run = false
@@ -49,6 +50,7 @@ describe Qurd::Action::Route53 do
       aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 200, 'Z3EWK6Z93GXEWX')
       aws_route53_list_resource_record_sets('test/responses/aws/route53-list-resource-record-sets-0.xml')
       aws_route53_list_resource_record_sets('test/responses/aws/route53-list-resource-record-sets-0.xml', 200, 'Z3EWK6Z93GXEWX')
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
       subject_private.terminate
@@ -68,12 +70,12 @@ describe Qurd::Action::Route53 do
       aws_route53_list_hosted_zones_by_name 'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-1-private.xml', 200, 'Z3EWK6Z93GXEWX'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'destroys private resource; not dry_run; not failed' do
       aws_route53_change_resource_record_sets'test/responses/aws/route53-change-resource-record-sets.xml', 200, 'Z3EWK6Z93GXEWX' 
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
       subject_private.terminate
@@ -91,12 +93,12 @@ describe Qurd::Action::Route53 do
       aws_route53_list_hosted_zones_by_name 'test/responses/aws/route53-list-hosted-zones-by-name-1-private.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-1.xml'
       aws_route53_list_resource_record_sets 'test/responses/aws/route53-list-resource-record-sets-0.xml', 200, 'Z3EWK6Z93GXEWX'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'destroys default resource; not dry_run; not failed' do
       aws_route53_change_resource_record_sets
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53_both.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
       subject_private.terminate
