@@ -201,7 +201,7 @@ describe Qurd::Action::Route53 do
       subject.terminate
     end
 
-    it 'raises during destroys a node; not dry_run; not failed' do
+    it 'raises during destroy a node; not dry_run; not failed' do
       aws_route53_change_resource_record_sets('test/responses/aws/route53-change-resource-record-sets.xml', 500)
       Qurd::Configuration.instance.config.dry_run = false
       _(lambda {

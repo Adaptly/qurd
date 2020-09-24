@@ -79,6 +79,13 @@ pipeline {
       }
     }
 
+    stage('pull request') {
+      when { changeRequest() }
+      steps {
+        unitTests(image: 'quay.io/adaptly/qurd', tag: '2.4', branch: env.CHANGE_BRANCH, repo: 'qurd')
+      }
+    }
+
   }
 
   post {

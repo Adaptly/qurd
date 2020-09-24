@@ -59,10 +59,37 @@ describe Qurd::Action::Cpu do
       mock.verify
     end
 
+    it 'raises during terminate a node; not dry_run; not failed' do
+      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml', 500)
+      Qurd::Configuration.instance.config.dry_run = false
+      _(lambda {
+        subject.terminate
+      }).must_raise Aws::Route53::Errors::Http500Error
+    end
+
+    it 'raises during terminate a node; not dry_run; not failed' do
+      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml')
+      Qurd::Configuration.instance.config.dry_run = false
+      _(lambda {
+        subject.terminate
+      }).must_raise Qurd::Action::Cpu::Errors::TooManyInstances
+    end
+
     it 'destroys a node; not dry_run; not failed' do
       aws_route53_change_resource_record_sets
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
+    end
+
+    it 'keeps a node; failed' do
+      mock.expect :warn, nil, ['Not deleting, message failed to process']
+      qurd_message.stub :failed?, true do
+        subject.stub :qurd_logger, mock do
+          Qurd::Configuration.instance.config.dry_run = false
+          subject.terminate
+        end
+      end
+      mock.verify
     end
 
   end
