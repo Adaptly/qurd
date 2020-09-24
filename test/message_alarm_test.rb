@@ -115,11 +115,11 @@ describe Qurd::Message::Alarm do
       aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-2.xml')
     end
     # FIXME Dunno why this kept tripping web mock
-    skip 'raises TooManyInstances' do
-      _(lambda {
-        subject.auto_scaling_group_name
-      }).must_raise Qurd::Message::Alarm::Errors::TooManyInstances
-    end
+    #it 'raises TooManyInstances' do
+      #_(lambda {
+        #subject.auto_scaling_group_name
+      #}).must_raise Qurd::Message::Alarm::Errors::TooManyInstances
+    #end
   end
 
   describe '#failed!' do
