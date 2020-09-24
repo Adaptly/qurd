@@ -11,6 +11,7 @@ describe Qurd::Action::Route53 do
 
   describe 'both zones' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 
@@ -58,6 +59,7 @@ describe Qurd::Action::Route53 do
 
   describe 'only private zone' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1-private.xml'
@@ -80,6 +82,7 @@ describe Qurd::Action::Route53 do
 
   describe 'only default zone' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'

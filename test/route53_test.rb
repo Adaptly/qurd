@@ -10,6 +10,7 @@ describe Qurd::Action::Route53 do
 
   describe '#configure' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -36,6 +37,7 @@ describe Qurd::Action::Route53 do
 
   describe '#instance_name' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
@@ -55,6 +57,7 @@ describe Qurd::Action::Route53 do
 
   describe '#hosted_zone' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
@@ -80,6 +83,7 @@ describe Qurd::Action::Route53 do
 
   describe '#hostname' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       Qurd::Configuration.instance.configure('test/inputs/qurd_chef_route53.yml')
@@ -102,6 +106,7 @@ describe Qurd::Action::Route53 do
 
   describe '#resource_record' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -136,6 +141,7 @@ describe Qurd::Action::Route53 do
 
   describe '#chef_node_name' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
@@ -170,6 +176,7 @@ describe Qurd::Action::Route53 do
 
   describe '#terminate' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -232,6 +239,7 @@ describe Qurd::Action::Route53 do
 
   describe '#test' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'

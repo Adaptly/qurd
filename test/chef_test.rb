@@ -2,6 +2,7 @@ require 'test_helper'
 describe Qurd::Action::Chef do
   include WebMockStubs
   def setup
+    ec2metadata
     aws_sqs_list_queues
     aws_sqs_set_queue_attributes
     aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -12,10 +13,7 @@ describe Qurd::Action::Chef do
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
   let(:qurd_message) { Qurd::Message::AutoScaling.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b')) }
-  let(:subject) {
-    ec2metadata
-    Qurd::Action::Chef.new(qurd_message) 
-  }
+  let(:subject) { Qurd::Action::Chef.new(qurd_message) }
 
   describe '#configure' do
     it 'adds the Qurd::Message::AutoScaling accessors chef_node, chef_client' do
@@ -47,6 +45,7 @@ describe Qurd::Action::Chef do
 
   describe '#run_before' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -141,6 +140,7 @@ describe Qurd::Action::Chef do
 
   describe '#terminate' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
@@ -212,6 +212,7 @@ describe Qurd::Action::Chef do
 
   describe '#test' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
