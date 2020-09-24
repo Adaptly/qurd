@@ -5,7 +5,7 @@ describe Qurd::Action::Route53Private do
   let(:sqs_client) { Aws::SQS::Client.new(region: 'us-west-2') }
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
-  let(:qurd_message) { Qurd::Message.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b'), name: 'staging') }
+  let(:qurd_message) { Qurd::Message::AutoScaling.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b'), name: 'staging') }
   let(:subject) { Qurd::Action::Route53Private.new(qurd_message) }
 
   describe '#configure' do

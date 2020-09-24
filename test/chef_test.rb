@@ -11,15 +11,15 @@ describe Qurd::Action::Chef do
   let(:sqs_client) { Aws::SQS::Client.new(region: 'us-west-2') }
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
-  let(:qurd_message) { Qurd::Message.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b')) }
+  let(:qurd_message) { Qurd::Message::AutoScaling.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b')) }
   let(:subject) { Qurd::Action::Chef.new(qurd_message) }
 
   describe '#configure' do
-    it 'adds the Qurd::Message accessors chef_node, chef_client' do
+    it 'adds the Qurd::Message::AutoScaling accessors chef_node, chef_client' do
       Qurd::Configuration.instance.init('test/inputs/qurd_chef.yml')
       Qurd::Action::Chef.configure('launch')
-      _(Qurd::Message.instance_methods).must_include :chef_node
-      _(Qurd::Message.instance_methods).must_include :chef_client
+      _(Qurd::Message::AutoScaling.instance_methods).must_include :chef_node
+      _(Qurd::Message::AutoScaling.instance_methods).must_include :chef_client
     end
 
     it 'sets the logger for chef' do

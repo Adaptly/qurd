@@ -82,7 +82,7 @@ pipeline {
     stage('pull request') {
       when { changeRequest() }
       steps {
-        unitTests(image: 'quay.io/adaptly/qurd', tag: '2.4', branch: env.CHANGE_BRANCH, repo: 'qurd')
+        unitTests(image: 'ruby', tag: '2.4-buster', branch: env.CHANGE_BRANCH, repo: 'qurd')
       }
     }
 

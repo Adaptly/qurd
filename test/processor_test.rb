@@ -33,9 +33,17 @@ describe Qurd::Processor do
       subject.instance_variable_get name.to_sym
     end
 
-    it 'sets various ivars' do
+    it 'sets various auto scaling ivars' do
       _(get_ivar(:@listener)).must_equal listener
-      _(get_ivar(:@message)).must_be_kind_of Qurd::Message
+      _(get_ivar(:@message)).must_be_kind_of Qurd::Message::AutoScaling
     end
+
+    it 'sets various alarm ivars' do
+      aws_auto_scaling_describe_auto_scaling_groups
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml'
+      _(get_ivar(:@listener)).must_equal listener
+      _(get_ivar(:@message)).must_be_kind_of Qurd::Message::Alarm
+    end
+
   end
 end

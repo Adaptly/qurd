@@ -2,6 +2,10 @@
 module Qurd
   # Use a {#Qurd::Listener} to act on an AWS SQS message
   class Processor
+    class Errors < StandardError
+      # unable to determine message type
+      class UnknownSubject; end
+    end
     include Qurd::Mixins::Configuration
     include Qurd::Mixins::AwsClients
 
@@ -15,7 +19,13 @@ module Qurd
     # @param [Struct] msg An AWS SQS message
     def initialize(listener, msg, listener_name, queue_url)
       @listener = listener
-      @message = Message.new(
+      # Regex raw JSON for a clue
+      obj = case msg.body
+            when /Subject[\\":\s]+ALARM/ then Message::Alarm
+            when /Subject[\\":\s]+Auto Scaling/ then Message::AutoScaling
+            else raise UnknownSubject
+            end
+      @message = obj.new(
         message: msg,
         name: listener_name,
         queue_url: queue_url,
@@ -29,7 +39,7 @@ module Qurd
     def process
       qurd_logger.info("Processing #{listener.name} " \
                        "action:#{message.action} " \
-                       "event:#{message.message.Event}")
+                       "subject:#{message.body.Subject}")
 
       if message.action
         instantiate_actions
