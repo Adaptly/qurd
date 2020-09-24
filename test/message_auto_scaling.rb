@@ -6,6 +6,7 @@ describe Qurd::Message::AutoScaling do
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
   let(:subject) do
+    ec2metadata
     Qurd::Message::AutoScaling.new(
       message: sqs_message,
       aws_credentials: Aws::Credentials.new('abc', 'def'),

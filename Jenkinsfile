@@ -82,7 +82,7 @@ pipeline {
     stage('pull request') {
       when { changeRequest() }
       steps {
-        unitTests(image: 'ruby', tag: '2.5-alpine3.12', branch: env.CHANGE_BRANCH, repo: 'qurd')
+        unitTests(image: 'ruby', tag: '2.5-alpine3.12', branch: env.CHANGE_BRANCH, repo: 'qurd', repoRequestMemory: '512Mi')
       }
     }
 
