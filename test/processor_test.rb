@@ -34,8 +34,8 @@ describe Qurd::Processor do
     end
 
     it 'sets various ivars' do
-      get_ivar(:@listener).must_equal listener
-      get_ivar(:@message).must_be_kind_of Qurd::Message
+      _(get_ivar(:@listener)).must_equal listener
+      _(get_ivar(:@message)).must_be_kind_of Qurd::Message
     end
   end
 end

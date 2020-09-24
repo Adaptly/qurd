@@ -44,12 +44,12 @@ describe Qurd::Message do
     end
 
     it 'sets various ivars' do
-      get_ivar(:@aws_credentials).must_be_kind_of Aws::Credentials
+      _(get_ivar(:@aws_credentials)).must_be_kind_of Aws::Credentials
       # changes between #receive_message calls
-      get_ivar(:@context).must_be_kind_of Cabin::Context
-      get_ivar(:@region).must_equal 'us-west-2'
-      get_ivar(:@failed).must_equal false
-      get_ivar(:@exceptions).must_equal []
+      _(get_ivar(:@context)).must_be_kind_of Cabin::Context
+      _(get_ivar(:@region)).must_equal 'us-west-2'
+      _(get_ivar(:@failed)).must_equal false
+      _(get_ivar(:@exceptions)).must_equal []
     end
   end
 

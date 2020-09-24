@@ -225,7 +225,7 @@ describe Qurd::Action::Route53 do
       aws_route53_list_resource_record_sets('test/responses/aws/route53-list-resource-record-sets-0.xml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
-      qurd_message.failed?.must_equal true
+      _(qurd_message.failed?).must_equal true
     end
 
   end

@@ -65,6 +65,7 @@ module Qurd
       end
 
       def auto_scaling_group_instance_id
+        qurd_logger.debug "Have #{auto_scaling_group.instances}"
         raise Errors::TooManyInstances if auto_scaling_group.instances.count > 1
         @auto_scaling_group_instance_id ||= auto_scaling_group.instances[0].instance_id
       end
@@ -74,8 +75,9 @@ module Qurd
       end
 
       def auto_scaling_group
-        return @auto_scaling_group if @auto_scaling_group
+        return @auto_scaling_group if defined? @auto_scaling_group
         g = asg.describe_auto_scaling_groups auto_scaling_group_names: [auto_scaling_group_name]
+        qurd_logger.debug "Found #{g.auto_scaling_groups.first.instances}"
         @auto_scaling_group = g.auto_scaling_groups.first
       end
 

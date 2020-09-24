@@ -79,7 +79,7 @@ module Qurd
       end
 
       def chef_node_name
-        return @chef_node_name if @chef_node_name
+        return @chef_node_name if defined? @chef_node_name
         @chef_node_name = chef_node.name
         qurd_logger.debug("Found chef name '#{@chef_node_name}'")
         @chef_node_name
@@ -147,7 +147,7 @@ module Qurd
       end
 
       def hosted_zone(tries = nil)
-        return @hosted_zone if @hosted_zone
+        return @hosted_zone if defined? @hosted_zone
         name = qurd_route53.hosted_zone
         qurd_logger.debug("Looking for zone '#{name}'")
         aws_retryable(tries) do

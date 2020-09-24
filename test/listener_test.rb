@@ -62,11 +62,11 @@ describe Qurd::Listener do
     end
     let(:subject) { Qurd::Listener.new(attrs) }
     it 'sets ivars' do
-      get_ivar(:@aws_credentials).must_be_kind_of Aws::Credentials
-      get_ivar(:@name).must_equal 'staging'
-      get_ivar(:@visibility_timeout).must_equal '0'
-      get_ivar(:@wait_time).must_equal '1'
-      get_ivar(:@queues).must_equal []
+      _(get_ivar(:@aws_credentials)).must_be_kind_of Aws::Credentials
+      _(get_ivar(:@name)).must_equal 'staging'
+      _(get_ivar(:@visibility_timeout)).must_equal '0'
+      _(get_ivar(:@wait_time)).must_equal '1'
+      _(get_ivar(:@queues)).must_equal []
     end
   end
 

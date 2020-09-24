@@ -142,13 +142,13 @@ module Qurd
     # @param [Fixnum] tries The number of times to retry the Aws API
     # @return [Struct|nil]
     def instance(tries = nil)
-      return @instance if @instance
+      return @instance if defined? @instance
       @instance = aws_instance(tries)
     end
 
     # Memoize the instance's +Name+ tag
     def instance_name
-      return @instance_name if @instance_name
+      return @instance_name if defined? @instance_name
       @instance_name = instance.tags.find do |t|
         t.key == 'Name'
       end.value

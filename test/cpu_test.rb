@@ -59,16 +59,16 @@ describe Qurd::Action::Cpu do
       mock.verify
     end
 
-    it 'raises during terminate a node; not dry_run; not failed' do
+    it 'raises Http500Error during terminate a node; not dry_run; not failed' do
       aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml', 500)
       Qurd::Configuration.instance.config.dry_run = false
       _(lambda {
         subject.terminate
-      }).must_raise Aws::Route53::Errors::Http500Error
+      }).must_raise Aws::AutoScaling::Errors::Http500Error
     end
 
-    it 'raises during terminate a node; not dry_run; not failed' do
-      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml')
+    it 'raises TooManyInstances during terminate a node; not dry_run; not failed' do
+      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-2.xml')
       Qurd::Configuration.instance.config.dry_run = false
       _(lambda {
         subject.terminate
@@ -76,7 +76,6 @@ describe Qurd::Action::Cpu do
     end
 
     it 'destroys a node; not dry_run; not failed' do
-      aws_route53_change_resource_record_sets
       Qurd::Configuration.instance.config.dry_run = false
       subject.terminate
     end
