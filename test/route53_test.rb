@@ -41,16 +41,17 @@ describe Qurd::Action::Route53 do
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_route53.yml')
     end
 
     it 'returns a hostname' do
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53.yml')
       _(subject.send(:instance_name)).must_equal 'test-414.staging.example.com'
     end
 
     it 'returns nil' do
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-0.xml'
+      Qurd::Configuration.instance.configure('test/inputs/qurd_route53.yml')
       _(subject.send(:instance_name)).must_equal nil
     end
   end

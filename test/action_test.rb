@@ -36,6 +36,7 @@ describe Qurd::Action do
 
   describe 'instance' do
     def setup
+      ec2metadata
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
