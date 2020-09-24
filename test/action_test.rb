@@ -8,11 +8,11 @@ describe Qurd::Action do
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd.yml')
     end
     let(:subject) { TestActionClass }
 
     it 'includes configuration mixin' do
+      Qurd::Configuration.instance.configure('test/inputs/qurd.yml')
       %w(qurd_config qurd_configuration qurd_logger qurd_logger!).each do |m|
         _(subject).must_respond_to m
       end
@@ -39,7 +39,6 @@ describe Qurd::Action do
       aws_sqs_list_queues
       aws_sqs_set_queue_attributes
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
     end
     let(:sqs_client) { Aws::SQS::Client.new(region: 'us-west-2') }
     let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
@@ -48,6 +47,7 @@ describe Qurd::Action do
     let(:subject) { TestActionClass.new(qurd_message) }
 
     it 'includes configuration mixin' do
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       %w(qurd_config qurd_configuration qurd_logger qurd_logger!).each do |m|
         _(subject).must_respond_to m
       end

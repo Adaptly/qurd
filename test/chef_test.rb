@@ -50,7 +50,6 @@ describe Qurd::Action::Chef do
       aws_sqs_set_queue_attributes
       aws_ec2_describe_instances 'test/responses/aws/ec2-describe-instances-1.xml'
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-terminate.xml'
-      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
     end
 
     it 'finds many nodes' do
@@ -69,6 +68,7 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       subject.run_before
       _(subject.message.chef_node).must_equal nil
       _(subject.message.context[:chef_name]).must_equal nil
@@ -85,6 +85,7 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       subject.run_before
       _(subject.message.chef_node).must_be_kind_of Chef::Node
       _(subject.message.context[:chef_name]).must_equal 'test-414.staging.example.com'
@@ -108,6 +109,7 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       subject.run_before
       _(subject.message.chef_node).must_be_kind_of Chef::Node
       _(subject.message.context[:chef_name]).must_equal 'test-414.staging.example.com'
@@ -131,6 +133,7 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       subject.run_before
       _(subject.message.chef_node).must_equal nil
       _(subject.message.context[:chef_name]).must_equal nil
@@ -157,7 +160,6 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
-      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
     end
     let(:mock) { Minitest::Mock.new }
     let(:node_mock) { Minitest::Mock.new }
@@ -167,6 +169,7 @@ describe Qurd::Action::Chef do
       mock.expect :debug, nil, ['Chef node found']
       mock.expect :debug, nil, ['Dry run; missing node']
 
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       Qurd::Configuration.instance.config.dry_run = true
       subject.run_before
       subject.stub :qurd_logger, mock do
@@ -182,6 +185,7 @@ describe Qurd::Action::Chef do
       client_mock.expect :destroy, nil
       client_mock.expect :nil?, false
 
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.run_before
       qurd_message.stub :chef_client, client_mock do
@@ -198,6 +202,7 @@ describe Qurd::Action::Chef do
 
     it 'keeps a node; failed' do
       mock.expect :warn, nil, ['Not deleting, message failed to process']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       Qurd::Configuration.instance.config.dry_run = false
       subject.run_before
       qurd_message.stub :failed?, true do
@@ -227,12 +232,12 @@ describe Qurd::Action::Chef do
         'client',
         'name:test-414.staging.example.com'
       )
-      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
     end
     let(:mock) { Minitest::Mock.new }
 
     it 'logs Test' do
       mock.expect :info, nil, ['Test']
+      Qurd::Configuration.instance.configure('test/inputs/qurd_chef.yml')
       subject.run_before
       subject.stub :qurd_logger, mock do
         subject.test
