@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "aws-sdk-sqs", "~> 1"
   spec.add_runtime_dependency "aws-sdk-route53", "~> 1"
   spec.add_runtime_dependency "chef", "= 15.4.45"
+  spec.add_runtime_dependency "chef-zero", "= 14.0.17"
 end
