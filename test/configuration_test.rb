@@ -2,7 +2,10 @@ require 'test_helper'
 describe Qurd::Configuration do
   include WebMockStubs
 
-  subject { Qurd::Configuration.instance }
+  subject {
+    ec2metadata
+    Qurd::Configuration.instance
+  }
   let(:mock) { Minitest::Mock.new }
   let(:config) do
     {

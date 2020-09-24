@@ -41,6 +41,7 @@ describe Qurd::Action::Dummy do
     %w[launch launch_error terminate terminate_error test].each do |action|
       describe "##{action}" do
         it 'sets dummy context' do
+          ec2metadata
           aws_sqs_receive_message "test/responses/aws/sqs-receive-message-1-#{action}.xml"
           subject.send action
           _(subject.context[:dummy]).must_equal true

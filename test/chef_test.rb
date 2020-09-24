@@ -12,7 +12,10 @@ describe Qurd::Action::Chef do
   let(:queue_url) { 'https://sqs.us-west-2.amazonaws.com/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1' }
   let(:sqs_message) { sqs_client.receive_message(queue_url: queue_url).messages.first }
   let(:qurd_message) { Qurd::Message::AutoScaling.new(message: sqs_message, region: 'us-west-2', aws_credentials: Aws::Credentials.new('a', 'b')) }
-  let(:subject) { Qurd::Action::Chef.new(qurd_message) }
+  let(:subject) {
+    ec2metadata
+    Qurd::Action::Chef.new(qurd_message) 
+  }
 
   describe '#configure' do
     it 'adds the Qurd::Message::AutoScaling accessors chef_node, chef_client' do

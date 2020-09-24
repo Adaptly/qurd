@@ -15,7 +15,10 @@ describe Qurd::Processor do
       wait_time: '0'
   )
   end
-  let(:subject) { Qurd::Processor.new(listener, sqs_message, 'staging', queue_url) }
+  let(:subject) {
+    ec2metadata
+    Qurd::Processor.new(listener, sqs_message, 'staging', queue_url)
+  }
 
   describe 'configuration mixin' do
     it 'responds to #qurd_config' do
