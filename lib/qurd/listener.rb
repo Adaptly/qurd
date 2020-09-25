@@ -144,7 +144,7 @@ module Qurd
           rescue Qurd::Processor::Errors::UnknownSubject => e
             qurd_logger.error("Unprocessable SQS body #{e}")
             lock_counter {
-              @count.failures += 1
+              @counter.failures += 1
             }
           end
         end
