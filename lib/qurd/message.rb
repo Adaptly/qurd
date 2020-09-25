@@ -147,7 +147,7 @@ module Qurd
       else
         delete_message
       end
-      context.clear
+      context.clear if context
     end
 
     def instance_id
