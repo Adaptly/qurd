@@ -28,5 +28,4 @@ RUN apk add --no-cache --update --virtual .cc \
     && apk add --no-cache --update bash git openssh-client \
     && rm -rf /var/cache/apk/*
 
-RUN ln -sf images/entrypoint.sh entrypoint.sh
 ENTRYPOINT ["/apps/entrypoint.sh"]
