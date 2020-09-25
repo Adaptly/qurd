@@ -11,6 +11,7 @@ module Qurd
 
     autoload :Dummy, 'qurd/action/dummy'
     autoload :Chef, 'qurd/action/chef'
+    autoload :Cpu, 'qurd/action/cpu'
     autoload :Route53, 'qurd/action/route53'
     autoload :Route53Private, 'qurd/action/route53_private'
 

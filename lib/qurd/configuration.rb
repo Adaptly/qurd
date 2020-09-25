@@ -135,6 +135,7 @@ module Qurd
 
     # Configure Cabin and Aws logging
     def configure_logger
+      $stdout.sync = true
       @logger = Cabin::Channel.new
       if config.log_file || config.daemonize
         path = config.log_file || '/var/log/qurd/qurd.log'
@@ -156,28 +157,31 @@ module Qurd
 
     # Configure sqs clients and queues
     def configure_auto_scaling_queues
-      config.listeners = config.auto_scaling_queues.map do |name, monitor|
-        if (config.auto_scaling_queues.nil? ||
-             config.auto_scaling_queues.empty?) &&
-           config.aws_credentials.default
-          creds = config.aws_credentials.default
-          monitor.credentials = 'default'
-        else
-          creds = config.aws_credentials[monitor.credentials]
+      config.keys.grep(/_queues$/).each do |queue|
+        ary = config.send queue
+        config.listeners = ary.map do |name, monitor|
+          if (ary.nil? ||
+               ary.empty?) &&
+             config.aws_credentials.default
+            creds = config.aws_credentials.default
+            monitor.credentials = 'default'
+          else
+            creds = config.aws_credentials[monitor.credentials]
+          end
+          verify_account!(name, monitor)
+          logger!("Undefined credential: '#{monitor.credentials}'") unless creds
+          vt = get_or_default(monitor, :visibility_timeout,
+                              config.visibility_timeout, :to_s)
+          wt = get_or_default(monitor, :wait_time, config.wait_time, :to_s)
+          Listener.new(
+            aws_credentials: creds,
+            name: name,
+            queues: monitor.queues,
+            region: monitor.region,
+            visibility_timeout: vt,
+            wait_time: wt
+          )
         end
-        verify_account!(name, monitor)
-        logger!("Undefined credential: '#{monitor.credentials}'") unless creds
-        vt = get_or_default(monitor, :visibility_timeout,
-                            config.visibility_timeout, :to_s)
-        wt = get_or_default(monitor, :wait_time, config.wait_time, :to_s)
-        Listener.new(
-          aws_credentials: creds,
-          name: name,
-          queues: monitor.queues,
-          region: monitor.region,
-          visibility_timeout: vt,
-          wait_time: wt
-        )
       end
     end
   end

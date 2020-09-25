@@ -14,15 +14,15 @@ describe Qurd::Mixins::AwsClients do
 
   describe '#aws_clients' do
     it 'instantiates a client, using a string' do
-      subject.aws_client('SQS').must_be_kind_of Aws::SQS::Client
+      _(subject.aws_client('SQS')).must_be_kind_of Aws::SQS::Client
     end
 
     it 'instantiates a client, using a symbol' do
-      subject.aws_client(:SQS).must_be_kind_of Aws::SQS::Client
+      _(subject.aws_client(:SQS)).must_be_kind_of Aws::SQS::Client
     end
 
     it 'memoizes a client' do
-      subject.aws_client(:EC2).must_equal subject.aws_client(:EC2)
+      _(subject.aws_client(:EC2)).must_equal subject.aws_client(:EC2)
     end
   end
 end

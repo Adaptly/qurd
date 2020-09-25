@@ -1,0 +1,18 @@
+{
+  "buildArgsVersionKey": "RUBY_VERSION",
+  "buildArgs": {
+    "RUBY_VERSION": "2.5",
+    "ALPINE_TAG": "3.12"
+  },
+  "imageName": "qurd",
+  "useGitShaAsImageTag": false,
+  "majorMinorVersionTag": false,
+  "copyToBuildRoot": [
+    "images/entrypoint.sh"
+  ],
+  "copyAllToBuildRootExcept": [
+    "ci-config.json",
+    "images",
+    "Jenkinsfile"
+  ]
+}

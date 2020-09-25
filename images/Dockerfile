@@ -1,6 +1,6 @@
-ARG RUBY_VERSION=2.4
-ARG ALPINE_VERSION=3.6
-FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION}
+ARG RUBY_VERSION
+ARG ALPINE_TAG
+FROM ruby:${RUBY_VERSION}-alpine${ALPINE_TAG}
 MAINTAINER Techops <techops@adaptly.com>
 
 ARG UPDATED_AT
@@ -25,8 +25,8 @@ RUN apk add --no-cache --update --virtual .cc \
     && bundle package --all \ 
     && bundle install --deployment --local --binstubs=bundler-bin \ 
     && apk del .cc \
-    && apk add --no-cache --update bash git openssh-client
+    && apk add --no-cache --update bash git openssh-client \
+    && rm -rf /var/cache/apk/*
 
-RUN ln -sf images/entrypoint.sh entrypoint.sh \
-    && chown -R nobody:nogroup bin
+RUN ln -sf images/entrypoint.sh entrypoint.sh
 ENTRYPOINT ["/apps/entrypoint.sh"]

@@ -1,20 +1,9 @@
 # rubocop:disable Metrics/LineLength
 module Qurd
   # Convert an SQS auto scaling message to a more usable object
-  # @example SQS auto scaling message
-  #   {
-  #     "Type" : "Notification",
-  #     "MessageId" : "e4379a5a-e119-53f7-b6ef-d7dbd32d31fe",
-  #     "TopicArn" : "arn:aws:sns:us-east-1:123456890:test-ScalingNotificationsTopic-HPPYDAYSAGAIN",
-  #     "Subject" : "Auto Scaling: termination for group \"test2-AutoScalingGroup-1QDX3CNO5SU3D\"",
-  #     "Message" : "{\"StatusCode\":\"InProgress\",\"Service\":\"AWS Auto Scaling\",\"AutoScalingGroupName\":\"test2-AutoScalingGroup-1QDX3CNO5SU3D\",\"Description\":\"Terminating EC2 instance: i-08e58cf8\",\"ActivityId\":\"93faaf3a-28cb-4982-a690-0a73c989ab1f\",\"Event\":\"autoscaling:EC2_INSTANCE_TERMINATE\",\"Details\":{\"Availability Zone\":\"us-east-1a\",\"Subnet ID\":\"subnet-3c3e0e14\"},\"AutoScalingGroupARN\":\"arn:aws:autoscaling:us-east-1:123456890:autoScalingGroup:4edb2535-5015-4b81-b668-88ecb0effcb7:autoScalingGroupName/test2-AutoScalingGroup-1QDX3CNO5SU3D\",\"Progress\":50,\"Time\":\"2015-03-16T19:33:08.181Z\",\"AccountId\":\"123456890\",\"RequestId\":\"93faaf3a-28cb-4982-a690-0a73c989ab1f\",\"StatusMessage\":\"\",\"EndTime\":\"2015-03-16T19:33:08.181Z\",\"EC2InstanceId\":\"i-08e58cf8\",\"StartTime\":\"2015-03-16T19:29:14.911Z\",\"Cause\":\"At 2015-03-16T19:29:14Z an instance was taken out of service in response to a ELB system health check failure.\"}",
-  #     "Timestamp" : "2015-03-16T19:33:08.242Z",
-  #     "SignatureVersion" : "1",
-  #     "Signature" : "I+SE8tMiq13/wDTPTJnJvHYi3jSjChhYByJAsnhY0wGa+0lxXc18vPIn9hIT0tYRNWMcR/Xn1AUNsgHrLjzB93xukyKA2CDff08zIuP0l4Xle/FSEJzfkJ0FDqZnzelFuZ2PMtO3lf5UY7CWZg/wKJv6I9CNJF4Ll9YgvC8Moe/31VwJwNy4TRAWdBhDuRXLjbEHoFNGjaGquiduOGySrgRmm74d0P0zWj7IfWbqO6ReNG2ADrqw+Bhn6dAkkeFH+9vJZeKdUCgsXX8XCBHcWX+yAb4WJH90hdosLN12DCdn2AvNgQfoTdpDPkTHC+QcwfRs52d3MD2WLrUfBMBy0A==",
-  #     "SigningCertURL" : "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-d6d679a1d18e95c2f9ffcf11f4f9e198.pem",
-  #     "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:123456890:test-ScalingNotificationsTopic-HPPYDAYSAGAIN:bd850bb2-1a69-4456-a517-c645a26f54b2"
-  #   }
   class Message
+    autoload :Alarm, 'qurd/message/alarm'
+    autoload :AutoScaling, 'qurd/message/auto_scaling'
     extend Qurd::Mixins::Configuration
 
     # Add setter and getter instances methods. If the get or set method is
@@ -71,13 +60,6 @@ module Qurd
 
       @exceptions = []
       @failed = false
-      @context = qurd_config.get_context(name: @name,
-                                         queue_name: (@queue_url[/[^\/]+$/] rescue nil),
-                                         instance_id: instance_id,
-                                         message_id: message_id,
-                                         action: action)
-
-      qurd_logger.info "Received #{body.Subject} Cause #{message.Cause} Event #{message.Event}"
     end
 
     # Convert the SQS message +body+ to a mash, keys include +Type+, +MessageId+,
@@ -86,26 +68,18 @@ module Qurd
     # @return [Hashie::Mash]
     def body
       @body ||= Hashie::Mash.new JSON.load(@sqs_message.body)
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      qurd_logger.error "Failed to parse body: #{e}"
       @body = Hashie::Mash.new {}
     end
 
-    # Convert +body.Message+ to a mash, keys include
-    # +StatusCode+, +Service+, +AutoScalingGroupName+, +Description+,
-    # +ActivityId+, +Event+, +Details+ +AutoScalingGroupARN+ +Progress+ +Time+
-    # +AccountId+ +RequestId+, +StatusMessage+ +EndTime+ +EC2InstanceId+
-    # +StartTime+ +Cause+
+    # Convert +body.Message+ to a mash
     # @return [Hashie::Mash]
     def message
       @message ||= Hashie::Mash.new JSON.load(body.Message)
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      qurd_logger.error "Failed to parse message: #{e}"
       @message = Hashie::Mash.new {}
-    end
-
-    # The SQS message's +EC2InstanceId+
-    # @return [String]
-    def instance_id
-      @instance_id ||= message.EC2InstanceId
     end
 
     # The +body.MessageId+
@@ -135,40 +109,30 @@ module Qurd
       @failed == true
     end
 
-    # Memozied EC2 instance. Caller must anticipate +nil+ results, as instances
-    # may terminate before the message is received.
-    # @param [Fixnum] tries The number of times to retry the Aws API
-    # @return [Struct|nil]
-    def instance(tries = nil)
-      return @instance if @instance
-      @instance = aws_instance(tries)
-    end
-
-    # Memoize the instance's +Name+ tag
-    def instance_name
-      return @instance_name if @instance_name
-      @instance_name = instance.tags.find do |t|
-        t.key == 'Name'
-      end.value
-      qurd_logger.debug("Found instance name '#{@instance_name}'")
-      @instance_name
-    rescue NoMethodError
-      qurd_logger.debug('No instance found')
-      @instance_name = nil
-    end
-
     # Convert the +message.Event+ to an action
     # @return [String] +launch+, +launch_error+, +terminate+, +terminate_error+,
     #   or +test+
     def action
-      case message.Event
-      when 'autoscaling:EC2_INSTANCE_LAUNCH' then 'launch'
-      when 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR' then 'launch_error'
-      when 'autoscaling:EC2_INSTANCE_TERMINATE' then 'terminate'
-      when 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR' then 'terminate_error'
-      when 'autoscaling:TEST_NOTIFICATION' then 'test'
+      if body.Subject =~ /^Auto Scaling: /
+        case message.Event
+        when 'autoscaling:EC2_INSTANCE_LAUNCH' then 'launch'
+        when 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR' then 'launch_error'
+        when 'autoscaling:EC2_INSTANCE_TERMINATE' then 'terminate'
+        when 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR' then 'terminate_error'
+        when 'autoscaling:TEST_NOTIFICATION' then 'test'
+        else
+          qurd_logger.warn "Ignoring ASG #{message.Event}"
+          failed!
+        end
+      elsif body.Subject =~ /^ALARM: /
+        if message.NewStateValue == 'ALARM'
+          'terminate'
+        else
+          qurd_logger.warn "Ignoring Alarm #{message.NewStateValue}"
+          failed!
+        end
       else
-        qurd_logger.info "Ignoring #{message.Event}"
+        qurd_logger.error "Ignoring unknown subject #{body.Subject}"
         failed!
       end
     end
@@ -183,7 +147,11 @@ module Qurd
       else
         delete_message
       end
-      context.clear
+      context.clear if context
+    end
+
+    def instance_id
+      raise "Must be overridden"
     end
 
     # @private
@@ -199,22 +167,6 @@ module Qurd
 
     private
 
-    # Get the Aws EC2 instance, using +instance_id+
-    # @param [Fixnum] tries the number of retries
-    # @return [Struct|nil]
-    # @see instance_id
-    # @see instance
-    def aws_instance(tries = nil)
-      return unless instance_id
-      aws_retryable(tries) do
-        aws_client(:EC2).describe_instances(
-          instance_ids: [instance_id]
-        ).reservations.first.instances.first
-      end
-    rescue NoMethodError
-      nil
-    end
-
     def delete_message
       qurd_logger.info 'Deleting'
       begin
@@ -227,5 +179,6 @@ module Qurd
         raise e
       end
     end
+
   end
 end

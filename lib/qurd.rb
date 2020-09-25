@@ -10,7 +10,10 @@ require 'json'
 require 'yaml'
 require 'hashie'
 require 'cabin'
-require 'aws-sdk'
+require 'aws-sdk-autoscaling'
+require 'aws-sdk-ec2'
+require 'aws-sdk-route53'
+require 'aws-sdk-sqs'
 require 'qurd/version'
 
 # Ain't that some bullshit

@@ -14,13 +14,13 @@ module Qurd
     #       hosted_zone: "staging.example.com."
     class Route53 < Action
       # Parent class for errors
-      class Errors < StandardError
+      class Errors
         # Hosted Zone not found
-        class ZoneNotFound < Errors; end
+        class ZoneNotFound < StandardError; end
         # Resource record set not found
-        class ResourceNotFound < Errors; end
+        class ResourceNotFound < StandardError; end
         # Hostname not available from EC2 and Chef
-        class HostNotFound < Errors; end
+        class HostNotFound < StandardError; end
       end
 
       @configure_done = false
@@ -79,7 +79,7 @@ module Qurd
       end
 
       def chef_node_name
-        return @chef_node_name if @chef_node_name
+        return @chef_node_name if defined? @chef_node_name
         @chef_node_name = chef_node.name
         qurd_logger.debug("Found chef name '#{@chef_node_name}'")
         @chef_node_name
@@ -147,7 +147,7 @@ module Qurd
       end
 
       def hosted_zone(tries = nil)
-        return @hosted_zone if @hosted_zone
+        return @hosted_zone if defined? @hosted_zone
         name = qurd_route53.hosted_zone
         qurd_logger.debug("Looking for zone '#{name}'")
         aws_retryable(tries) do

@@ -15,12 +15,15 @@ describe Qurd::Processor do
       wait_time: '0'
   )
   end
-  let(:subject) { Qurd::Processor.new(listener, sqs_message, 'staging', queue_url) }
+  let(:subject) {
+    ec2metadata
+    Qurd::Processor.new(listener, sqs_message, 'staging', queue_url)
+  }
 
   describe 'configuration mixin' do
     it 'responds to #qurd_config' do
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
-      subject.must_respond_to :qurd_config
+      _(subject).must_respond_to :qurd_config
     end
   end
 
@@ -33,9 +36,26 @@ describe Qurd::Processor do
       subject.instance_variable_get name.to_sym
     end
 
-    it 'sets various ivars' do
-      get_ivar(:@listener).must_equal listener
-      get_ivar(:@message).must_be_kind_of Qurd::Message
+    it 'raises Errors::UnknownSubject' do
+      _(lambda do
+        new_body = '{"Subject": "foo"}'
+        sqs_message.stub :body, new_body do
+          subject
+        end
+      end).must_raise ::Qurd::Processor::Errors::UnknownSubject
     end
+
+    it 'sets various auto scaling ivars' do
+      _(get_ivar(:@listener)).must_equal listener
+      _(get_ivar(:@message)).must_be_kind_of Qurd::Message::AutoScaling
+    end
+
+    it 'sets various alarm ivars' do
+      aws_auto_scaling_describe_auto_scaling_groups
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml'
+      _(get_ivar(:@listener)).must_equal listener
+      _(get_ivar(:@message)).must_be_kind_of Qurd::Message::Alarm
+    end
+
   end
 end
