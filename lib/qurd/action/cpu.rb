@@ -10,9 +10,9 @@ module Qurd
     #         - "/QueueName/i"
     class Cpu < Action
       # Parent class for errors
-      class Errors < StandardError
+      class Errors
         # too many ec2 instances associated with the auto scaling group
-        class TooManyInstances; end
+        class TooManyInstances < StandardError; end
       end
 
       @configure_done = false

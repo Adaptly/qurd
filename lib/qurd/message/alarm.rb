@@ -15,11 +15,11 @@ module Qurd
     #   "UnsubscribeURL": "https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:105191381127:staging-notifications-19NH4PMMXT1V2-AlarmTopic-245OJ740R13I:8486ec0e-9928-426c-9cf6-e49f94424048"
     # }
     class Alarm < ::Qurd::Message
-      class Errors < StandardError
+      class Errors
         # too many ec2 instances associated with the auto scaling group
-        class TooManyInstances; end
+        class TooManyInstances < StandardError; end
         # The ASG was not found in the SQS message
-        class AutoScalingGroupNameNotFound; end
+        class AutoScalingGroupNameNotFound < StandardError; end
       end
 
       #

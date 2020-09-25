@@ -14,13 +14,13 @@ module Qurd
     #       hosted_zone: "staging.example.com."
     class Route53 < Action
       # Parent class for errors
-      class Errors < StandardError
+      class Errors
         # Hosted Zone not found
-        class ZoneNotFound < Errors; end
+        class ZoneNotFound < StandardError; end
         # Resource record set not found
-        class ResourceNotFound < Errors; end
+        class ResourceNotFound < StandardError; end
         # Hostname not available from EC2 and Chef
-        class HostNotFound < Errors; end
+        class HostNotFound < StandardError; end
       end
 
       @configure_done = false

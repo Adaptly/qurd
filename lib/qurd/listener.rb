@@ -133,13 +133,20 @@ module Qurd
       msgs.messages.map do |msg|
         Thread.new(msg) do |m|
           qurd_logger.debug("Found message #{msg}")
-          r = Processor.new self, m, name, qurl
-          r.process
-          lock_counter { 
-            r.message.failed? ?
+          begin
+            r = Processor.new self, m, name, qurl
+            r.process
+            lock_counter { 
+              r.message.failed? ?
               @counter.failures += 1 :
               @counter.successes += 1
-          }
+            }
+          rescue Qurd::Processor::Errors::UnknownSubject => e
+            qurd_logger.error("Unprocessable SQS body #{e}")
+            lock_counter {
+              @count.failures += 1
+            }
+          end
         end
       end
     end

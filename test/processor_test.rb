@@ -36,6 +36,15 @@ describe Qurd::Processor do
       subject.instance_variable_get name.to_sym
     end
 
+    it 'raises Errors::UnknownSubject' do
+      _(lambda do
+        new_body = '{"Subject": "foo"}'
+        sqs_message.stub :body, new_body do
+          subject
+        end
+      end).must_raise ::Qurd::Processor::Errors::UnknownSubject
+    end
+
     it 'sets various auto scaling ivars' do
       _(get_ivar(:@listener)).must_equal listener
       _(get_ivar(:@message)).must_be_kind_of Qurd::Message::AutoScaling

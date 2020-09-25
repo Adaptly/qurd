@@ -2,9 +2,9 @@
 module Qurd
   # Use a {#Qurd::Listener} to act on an AWS SQS message
   class Processor
-    class Errors < StandardError
+    class Errors
       # unable to determine message type
-      class UnknownSubject; end
+      class UnknownSubject < StandardError; end
     end
     include Qurd::Mixins::Configuration
     include Qurd::Mixins::AwsClients
@@ -23,7 +23,9 @@ module Qurd
       obj = case msg.body
             when /Subject[\\":\s]+ALARM/ then Message::Alarm
             when /Subject[\\":\s]+Auto Scaling/ then Message::AutoScaling
-            else raise UnknownSubject
+            else 
+              msg.body[/Subject[\\":\s]+"([^"]+)"/]
+              raise Errors::UnknownSubject.new("Subject '#$1'")
             end
       @message = obj.new(
         message: msg,
