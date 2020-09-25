@@ -135,6 +135,7 @@ module Qurd
 
     # Configure Cabin and Aws logging
     def configure_logger
+      $stdout.sync = true
       @logger = Cabin::Channel.new
       if config.log_file || config.daemonize
         path = config.log_file || '/var/log/qurd/qurd.log'
