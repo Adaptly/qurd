@@ -25,6 +25,13 @@ module Qurd
             when /Subject[\\":\s]+Auto Scaling/ then Message::AutoScaling
             else 
               msg.body[/Subject[\\":\s]+"([^"]+)"/]
+              Message.new(
+                message: msg,
+                name: listener_name,
+                queue_url: queue_url,
+                aws_credentials: @listener.aws_credentials,
+                region: @listener.region
+              ).delete
               raise Errors::UnknownSubject.new("Subject '#$1'")
             end
       @message = obj.new(
