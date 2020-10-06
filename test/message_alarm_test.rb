@@ -112,15 +112,28 @@ describe Qurd::Message::Alarm do
   end
 
   describe '#auto_scaling_group_name' do
-    def setup
-      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-2.xml')
-    end
     # FIXME Dunno why this kept tripping web mock
     #it 'raises TooManyInstances' do
+      #aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-2.xml')
       #_(lambda {
         #subject.auto_scaling_group_name
       #}).must_raise Qurd::Message::Alarm::Errors::TooManyInstances
     #end
+    it 'raises AutoScalingGroupNameNotFound, missing key' do
+      aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-cpu-terminate.xml'
+      aws_auto_scaling_describe_auto_scaling_groups('test/responses/aws/autoscaling-describe-auto-scaling-group-name-1.xml')
+      _(lambda {
+        trigger = Minitest::Mock.new
+        def trigger.Trigger
+          dimensions = Minitest::Mock.new
+          def dimensions.Dimensions; [{"name" => "key", "value" => "value"}]; end
+          dimensions
+        end
+        subject.stub :message, trigger do
+          subject.send(:auto_scaling_group_name)
+        end
+      }).must_raise Qurd::Message::Alarm::Errors::AutoScalingGroupNameNotFound
+    end
   end
 
   describe '#failed!' do

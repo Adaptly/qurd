@@ -30,6 +30,7 @@ describe Qurd::Processor do
   describe '#new' do
     def setup
       aws_sqs_receive_message 'test/responses/aws/sqs-receive-message-1-launch.xml'
+      aws_sqs_delete_message
     end
 
     def get_ivar(name)

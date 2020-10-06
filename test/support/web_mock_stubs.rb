@@ -68,6 +68,15 @@ module WebMockStubs
       .to_return(status: status.to_i, body: File.read(file))
   end
 
+  def aws_sqs_delete_message(file = '/dev/null',
+                              queue_path = '/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1',
+                              status = 200,
+                              region = 'us-west-2')
+    stub_request(:post, "https://sqs.#{region}.amazonaws.com#{queue_path}")
+      .with(body: /Action=DeleteMessage/)
+      .to_return(status: status.to_i, body: File.read(file))
+  end
+
   def aws_sqs_receive_message(file = 'test/responses/aws/sqs-receive-message-1-other.xml',
                               queue_path = '/123456890/test2-ScalingNotificationsQueue-HPPYDAYSAGAI1',
                               status = 200,

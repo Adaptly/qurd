@@ -25,22 +25,21 @@ module Qurd
             when /Subject[\\":\s]+Auto Scaling/ then Message::AutoScaling
             else 
               msg.body[/Subject[\\":\s]+"([^"]+)"/]
-              Message.new(
-                message: msg,
-                name: listener_name,
-                queue_url: queue_url,
-                aws_credentials: @listener.aws_credentials,
-                region: @listener.region
-              ).delete
+              delete_message(listener, msg, listener_name, queue_url)
               raise Errors::UnknownSubject.new("Subject '#$1'")
             end
-      @message = obj.new(
-        message: msg,
-        name: listener_name,
-        queue_url: queue_url,
-        aws_credentials: @listener.aws_credentials,
-        region: @listener.region
-      )
+      begin
+        @message = obj.new(
+          message: msg,
+          name: listener_name,
+          queue_url: queue_url,
+          aws_credentials: @listener.aws_credentials,
+          region: @listener.region
+        )
+      rescue StandardError => e
+        delete_message(listener, msg, listener_name, queue_url)
+        raise e
+      end
     end
 
     # Process an SQS message, by instantiating an instance of each action,
@@ -70,6 +69,16 @@ module Qurd
     end
 
     private
+
+    def delete_message(listener, msg, listener_name, queue_url)
+      Message.new(
+        message: msg,
+        name: listener_name,
+        queue_url: queue_url,
+        aws_credentials: @listener.aws_credentials,
+        region: @listener.region
+      ).delete
+    end
 
     def instantiate_actions
       @actions = qurd_configuration.actions[message.action].map do |klass|
