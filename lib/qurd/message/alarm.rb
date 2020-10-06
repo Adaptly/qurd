@@ -63,10 +63,10 @@ module Qurd
       def auto_scaling_group_name
         return @auto_scaling_group_name if defined? @auto_scaling_group_name
         g = message.Trigger.Dimensions.find{|d| d["name"] == "AutoScalingGroupName"}["value"]
-        raise AutoScalingGroupNameNotFound if g.nil?
+        raise Errors::AutoScalingGroupNameNotFound if g.nil?
         @auto_scaling_group_name = g
       rescue NoMethodError => e
-        raise AutoScalingGroupNameNotFound
+        raise Errors::AutoScalingGroupNameNotFound
       end
 
       def auto_scaling_group
